@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style" />
+    <!-- <script src="/js" defer></script> -->
+    <title>Coordinate</title>
+  </head>
+  <body>
+    <h1>Coordinate on <a title="{{ .Addr }}" href="/">{{ .Host }}</a></h1>
+
+    {{ if .Error }}
+    <div class="error">{{ .Error }}</div>
+    {{ end }}
+    
+    {{ if .SplitPath }}
+    <ul class="path">
+      {{ range .SplitPath }}
+        <li>{{ . }}</li>
+      {{ end }}
+    </ul>
+    {{ end }}
+
+    <ul>
+      {{ if eq .Path "/" }}
+      {{ range .Files }}
+        <li><a href="{{ .Name }}">{{ .Name }}</a></li>
+      {{ end }}
+      {{ else }}
+      {{ range .Files }}
+        <li><a href="{{ $.Path }}/{{ .Name }}">{{ .Name }}</a></li>
+      {{ end }}
+      {{ end }}
+    </ul>
+  </body>
+</html>
