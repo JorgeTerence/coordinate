@@ -49,8 +49,6 @@ func main() {
 		dir, err := os.ReadDir(targetPath)
 
 		if err == nil {
-			fmt.Println(path.Join(r.URL.Path, dir[0].Name()))
-
 			dirTmpl.Execute(w, DirPageData{dir, host, addr, splitPath, r.URL.Path, path.Join, nil})
 		} else {
 			// If that fails, try to read a file
@@ -66,11 +64,9 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/style", func(w http.ResponseWriter, r *http.Request) {
-		file, _ := os.ReadFile(fmt.Sprintf("%s/web/style.css", INSTALL_PATH))
-		w.Header().Set("content-type", "text/css")
-		fmt.Fprint(w, string(file))
-	})
+	// IDEA: Allow for custom templates and stylesheets inside '~/.config/coordinate'
+	programFiles := http.FileServer(http.Dir(path.Join(INSTALL_PATH, "web")))
+	http.Handle("/static/", http.StripPrefix("/static/", programFiles))
 
 	fmt.Printf("Serving from %s on http://%s:%d\n", host, addr, PORT)
 	http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
