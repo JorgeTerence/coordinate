@@ -29,8 +29,11 @@ type DirPageData struct {
 type FilePageData struct {
 	Host      string
 	Addr      string
+	PathJoin  func(elem ...string) string
 	SplitPath []string
+	Path      string
 	FileData  string
+	FileName  string
 }
 
 func main() {
@@ -55,7 +58,7 @@ func main() {
 			file, err := os.ReadFile(targetPath)
 
 			if err == nil {
-				fileTmpl.Execute(w, FilePageData{host, addr, splitPath, string(file)})
+				fileTmpl.Execute(w, FilePageData{host, addr, path.Join, splitPath, r.URL.Path, string(file), path.Base(targetPath)})
 			} else {
 				// If that fails, return an error message
 				w.WriteHeader(404)
@@ -67,6 +70,9 @@ func main() {
 	// IDEA: Allow for custom templates and stylesheets inside '~/.config/coordinate'
 	programFiles := http.FileServer(http.Dir(path.Join(INSTALL_PATH, "web")))
 	http.Handle("/static/", http.StripPrefix("/static/", programFiles))
+
+	downloadFiles := http.FileServer(http.Dir(pwd))
+	http.Handle("/download/", http.StripPrefix("/download/", downloadFiles))
 
 	fmt.Printf("Serving from %s on http://%s:%d\n", host, addr, PORT)
 	http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)

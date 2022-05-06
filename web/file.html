@@ -15,6 +15,7 @@
         <li>{{ . }}</li>
       {{ end }}
     </ul>
+    <a href="{{ call .PathJoin ("/download/") (.Path) }}" download="{{ .FileName }}">Download</a>
     <pre><code>{{ .FileData }}</code></pre>
   </body>
 </html>

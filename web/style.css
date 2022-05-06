@@ -78,6 +78,15 @@ a:visited {
   color: var(--active-dimm);
 }
 
+a[download] {
+  background-color: var(--active);
+  color: var(--background);
+  padding: 0.5rem 0.7rem;
+  border-radius: 0.5rem;
+  box-shadow: 1px 1px 1px var(--shadow);
+  display: inline-block;
+}
+
 pre {
   border-radius: 0.5rem;
   padding: 0.75rem;
