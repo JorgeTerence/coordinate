@@ -12,7 +12,7 @@
     <h1>Coordinate on <a title="{{ .Addr }}" href="/">{{ .Host }}</a></h1>
     <ul class="path">
       {{ range .SplitPath }}
-      <li>{{ . }}</li>
+        <li>{{ . }}</li>
       {{ end }}
     </ul>
     <pre><code>{{ .FileData }}</code></pre>

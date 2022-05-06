@@ -1,17 +1,13 @@
 package main
 
 import (
-	// "errors"
 	"errors"
 	"fmt"
 	"io/fs"
-	"strings"
-
-	// "log"
 	"net/http"
 	"os"
 	"path"
-	// "strings"
+	"strings"
 )
 
 const (
@@ -26,6 +22,7 @@ type DirPageData struct {
 	Addr      string
 	SplitPath []string
 	Path      string
+	PathJoin  func(elem ...string) string
 	Error     error
 }
 
@@ -41,19 +38,20 @@ func main() {
 	addr := address.String()[:len(address.String())-3]
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// PROD: Load templates on the first executioon, not on every request
 		dirTmpl := loadTmpl("directory", INSTALL_PATH)
 		fileTmpl := loadTmpl("file", INSTALL_PATH)
 
 		targetPath := path.Join(pwd, r.URL.Path)
 		splitPath := strings.Split(r.URL.Path, "/")[1:]
-		// anchorPrefix := r.URL.Path
 
 		// Try to read a directory
 		dir, err := os.ReadDir(targetPath)
-		
+
 		if err == nil {
-			// if anchorPrefix == "/" { anchorPrefix = "" }
-			dirTmpl.Execute(w, DirPageData{dir, host, addr, splitPath, r.URL.Path, nil})
+			fmt.Println(path.Join(r.URL.Path, dir[0].Name()))
+
+			dirTmpl.Execute(w, DirPageData{dir, host, addr, splitPath, r.URL.Path, path.Join, nil})
 		} else {
 			// If that fails, try to read a file
 			file, err := os.ReadFile(targetPath)
@@ -63,7 +61,7 @@ func main() {
 			} else {
 				// If that fails, return an error message
 				w.WriteHeader(404)
-				dirTmpl.Execute(w, DirPageData{[]fs.DirEntry{}, host, addr, splitPath, "", errors.New("DIRECTORY OR FILE NOT FOUND")})
+				dirTmpl.Execute(w, DirPageData{[]fs.DirEntry{}, host, addr, splitPath, "", path.Join, errors.New("DIRECTORY OR FILE NOT FOUND")})
 			}
 		}
 	})

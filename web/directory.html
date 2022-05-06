@@ -11,26 +11,20 @@
     <h1>Coordinate on <a title="{{ .Addr }}" href="/">{{ .Host }}</a></h1>
 
     {{ if .Error }}
-    <div class="error">{{ .Error }}</div>
+      <div class="error">{{ .Error }}</div>
     {{ end }}
-    
-    {{ if .SplitPath }}
-    <ul class="path">
-      {{ range .SplitPath }}
-        <li>{{ . }}</li>
-      {{ end }}
-    </ul>
+
+    {{ if and (gt (len .SplitPath) (0)) (ne (index .SplitPath 0) ("")) }}
+      <ul class="path">
+        {{ range .SplitPath }}
+          <li>{{ . }}</li>
+        {{ end }}
+      </ul>
     {{ end }}
 
     <ul>
-      {{ if eq .Path "/" }}
       {{ range .Files }}
-        <li><a href="{{ .Name }}">{{ .Name }}</a></li>
-      {{ end }}
-      {{ else }}
-      {{ range .Files }}
-        <li><a href="{{ $.Path }}/{{ .Name }}">{{ .Name }}</a></li>
-      {{ end }}
+        <li><a href="{{ call $.PathJoin ($.Path) (.Name) }}">{{ .Name }}</a></li>
       {{ end }}
     </ul>
   </body>
