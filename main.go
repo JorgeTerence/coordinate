@@ -29,6 +29,7 @@ type FilePageData struct {
 	Base    PageData
 	Content string
 	Name    string
+	Ext     string
 }
 type ErrorPageData struct {
 	Base PageData
@@ -62,7 +63,7 @@ func main() {
 			}
 		} else {
 			file, err := os.ReadFile(targetPath)
-			fileTmpl.Execute(w, FilePageData{pageData, string(file), path.Base(targetPath)})
+			fileTmpl.Execute(w, FilePageData{pageData, string(file), path.Base(targetPath), path.Ext(targetPath)})
 			
 			if err != nil {
 				errTmpl.Execute(w, ErrorPageData{pageData, err})

@@ -15,7 +15,13 @@
         <li>{{ . }}</li>
       {{ end }}
     </ul>
+
     <a href="{{ call .Base.PathJoin ("/download/") (.Base.Path) }}" download="{{ .Name }}">Download</a>
-    <pre><code>{{ .Content }}</code></pre>
+    
+    {{ if or (eq (.Ext) (".png") (eq (.Ext) (".jpg"))) }}
+      <img src="/download/{{ .Base.Path }}" alt="{{ .Name }}">
+    {{ else }}
+      <pre><code>{{ .Content }}</code></pre>
+    {{ end }}
   </body>
 </html>
