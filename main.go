@@ -12,7 +12,6 @@ import (
 const (
 	PORT         int32  = 8080
 	INSTALL_PATH string = "/home/jorge/Desktop/coordinate"
-	// INSTALL_PATH string = "/usr/bin/coordinate"
 )
 
 type PageData struct {
@@ -38,7 +37,7 @@ type ErrorPageData struct {
 
 func main() {
 	pwd, host, address := getEnv()
-	addr := address.String()[:len(address.String())-3]
+	addr := strings.Split(address.String(), "/")[0]
 
 	dirTmpl := loadTmpl("directory", INSTALL_PATH)
 	fileTmpl := loadTmpl("file", INSTALL_PATH)
@@ -71,7 +70,6 @@ func main() {
 		}
 	})
 
-	// IDEA: Allow for custom templates and stylesheets inside '~/.config/coordinate'
 	programFiles := http.FileServer(http.Dir(path.Join(INSTALL_PATH, "web")))
 	http.Handle("/static/", http.StripPrefix("/static/", programFiles))
 
