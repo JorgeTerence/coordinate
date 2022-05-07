@@ -23,12 +23,12 @@ Read the next section.
 ## TODO
 
 - [x] Add download functionality
-- [] Add preview to formats like PDF, docx, xlsx
-- [] Be prepared to handle executables, encoded files and protected directories
-- [] Add file icons
-- [] Add syntax highlighting for programming languages
-- [] Fine tune styling
-- [] More precise error messages
+- [ ] Add preview to formats like PDF, docx, xlsx
+- [ ] Be prepared to handle executables, encoded files and protected directories
+- [ ] Add file icons
+- [ ] Add syntax highlighting for programming languages
+- [ ] Fine tune styling
+- [ ] More precise error messages
 
 ## Is the name insiperd by AOT?
 

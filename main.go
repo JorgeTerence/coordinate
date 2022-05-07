@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"io/fs"
 	"net/http"
@@ -16,53 +15,58 @@ const (
 	// INSTALL_PATH string = "/usr/bin/coordinate"
 )
 
-type DirPageData struct {
-	Files     []fs.DirEntry
+type PageData struct {
 	Host      string
 	Addr      string
-	SplitPath []string
 	Path      string
+	SplitPath []string
 	PathJoin  func(elem ...string) string
-	Error     error
 }
-
+type DirPageData struct {
+	Base    PageData
+	Entries []fs.DirEntry
+}
 type FilePageData struct {
-	Host      string
-	Addr      string
-	PathJoin  func(elem ...string) string
-	SplitPath []string
-	Path      string
-	FileData  string
-	FileName  string
+	Base    PageData
+	Content string
+	Name    string
+}
+type ErrorPageData struct {
+	Base PageData
+	Err  error
 }
 
 func main() {
 	pwd, host, address := getEnv()
 	addr := address.String()[:len(address.String())-3]
 
+	dirTmpl := loadTmpl("directory", INSTALL_PATH)
+	fileTmpl := loadTmpl("file", INSTALL_PATH)
+	errTmpl := loadTmpl("error", INSTALL_PATH)
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// PROD: Load templates on the first executioon, not on every request
-		dirTmpl := loadTmpl("directory", INSTALL_PATH)
-		fileTmpl := loadTmpl("file", INSTALL_PATH)
-
 		targetPath := path.Join(pwd, r.URL.Path)
-		splitPath := strings.Split(r.URL.Path, "/")[1:]
+		target, err := os.Stat(targetPath)
+		pageData := PageData{host, addr, r.URL.Path, strings.Split(r.URL.Path, "/")[1:], path.Join}
 
-		// Try to read a directory
-		dir, err := os.ReadDir(targetPath)
+		if err != nil {
+			errTmpl.Execute(w, ErrorPageData{pageData, err})
+			return
+		}
 
-		if err == nil {
-			dirTmpl.Execute(w, DirPageData{dir, host, addr, splitPath, r.URL.Path, path.Join, nil})
+		if target.IsDir() {
+			dir, err := os.ReadDir(targetPath)
+			dirTmpl.Execute(w, DirPageData{pageData, dir})
+
+			if err != nil {
+				errTmpl.Execute(w, ErrorPageData{pageData, err})
+			}
 		} else {
-			// If that fails, try to read a file
 			file, err := os.ReadFile(targetPath)
-
-			if err == nil {
-				fileTmpl.Execute(w, FilePageData{host, addr, path.Join, splitPath, r.URL.Path, string(file), path.Base(targetPath)})
-			} else {
-				// If that fails, return an error message
-				w.WriteHeader(404)
-				dirTmpl.Execute(w, DirPageData{[]fs.DirEntry{}, host, addr, splitPath, "", path.Join, errors.New("DIRECTORY OR FILE NOT FOUND")})
+			fileTmpl.Execute(w, FilePageData{pageData, string(file), path.Base(targetPath)})
+			
+			if err != nil {
+				errTmpl.Execute(w, ErrorPageData{pageData, err})
 			}
 		}
 	})

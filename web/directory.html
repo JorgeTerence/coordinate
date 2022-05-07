@@ -5,27 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/static/style.css" />
     <!-- <script src="/js" defer></script> -->
-    <title>Coordinate</title>
+    <title>Coordinate dir</title>
   </head>
   <body>
-    <h1>Coordinate on <a title="{{ .Addr }}" href="/">{{ .Host }}</a></h1>
+    <h1>Coordinate on <a title="{{ .Base.Addr }}" href="/">{{ .Base.Host }}</a></h1>
 
-    {{ if .Error }}
-      <div class="error">{{ .Error }}</div>
-    {{ end }}
-
-    {{/* DUMB: Redundant checking. Just check te second one */}}
-    {{ if and (gt (len .SplitPath) (0)) (ne (index .SplitPath 0) ("")) }}
+    {{ if ne (index .Base.SplitPath 0) ("") }}
       <ul class="path">
-        {{ range .SplitPath }}
+        {{ range .Base.SplitPath }}
           <li>{{ . }}</li>
         {{ end }}
       </ul>
     {{ end }}
 
     <ul>
-      {{ range .Files }}
-        <li><a href="{{ call $.PathJoin ($.Path) (.Name) }}">{{ .Name }}</a></li>
+      {{ range .Entries }}
+        <li><a href="{{ call $.Base.PathJoin ($.Base.Path) (.Name) }}">{{ .Name }}</a></li>
       {{ end }}
     </ul>
   </body>
