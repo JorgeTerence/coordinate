@@ -100,7 +100,7 @@ code {
   font-family: var(--font-mono);
 }
 
-img {
+img, video {
   display: block;
   margin-block: 1rem;
   border-radius: 0.45rem;

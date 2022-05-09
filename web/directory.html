@@ -20,7 +20,7 @@
 
     <ul>
       {{ range .Entries }}
-        <li><a href="{{ call $.Base.PathJoin ($.Base.Path) (.Name) }}">{{ .Name }}</a></li>
+        <li><a href="{{ call $.Base.Util.PathJoin ($.Base.Path) (.Name) }}">{{ .Name }}</a></li>
       {{ end }}
     </ul>
   </body>

@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/static/style.css" />
-    <!-- <script src="/js" defer></script> -->
     <title>Coordinate</title>
   </head>
   <body>
@@ -16,10 +15,12 @@
       {{ end }}
     </ul>
 
-    <a href="{{ call .Base.PathJoin ("/download/") (.Base.Path) }}" download="{{ .Name }}">Download</a>
+    <a href="{{ call .Base.Util.PathJoin ("/download/") (.Base.Path) }}" download="{{ .Name }}">Download</a>
     
-    {{ if or (eq (.Ext) (".png") (eq (.Ext) (".jpg"))) }}
+    {{ if call .Base.Util.ArrContains (call .Base.Util.Arr ".png" ".jpg" ".jpeg" ".webp" ".svg") (.Ext) }}
       <img src="/download/{{ .Base.Path }}" alt="{{ .Name }}">
+    {{ else if call .Base.Util.ArrContains (call .Base.Util.Arr ".mp4" ".mov" ".avi" ".wmf") (.Ext) }}
+      <video controls src="/download/{{ .Base.Path }}"></video>
     {{ else }}
       <pre><code>{{ .Content }}</code></pre>
     {{ end }}
