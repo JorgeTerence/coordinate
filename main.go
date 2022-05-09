@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"github.com/pkg/browser"
 )
 
 const (
@@ -55,5 +56,6 @@ func main() {
 	http.Handle("/download/", http.StripPrefix("/download/", downloadFiles))
 
 	fmt.Printf("Serving from %s on http://%s:%d\n", host, addr, PORT)
+	browser.OpenURL(fmt.Sprintf("http://localhost:%d", PORT))
 	http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
 }
