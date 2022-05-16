@@ -15,8 +15,7 @@ const (
 )
 
 func main() {
-	pwd, host, address := getEnv()
-	addr := strings.Split(address.String(), "/")[0]
+	pwd, host, addr := getEnv()
 
 	dirTmpl := loadTmpl("directory", INSTALL_PATH)
 	fileTmpl := loadTmpl("file", INSTALL_PATH)

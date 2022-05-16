@@ -7,55 +7,55 @@ import (
 	"log"
 	"net"
 	"os"
+	"strings"
 )
 
-func getLocalAddr(host string) (net.Addr, error) {
-	ifaces, err := net.Interfaces()
-	if err != nil {
-		return nil, errors.New("FAILED TO FIND NETWORK INTERFACES")
+func getIPAddr() (string, error) {
+	ifaces, _ := net.Interfaces()
+	for _, i := range ifaces {
+		addrs, _ := i.Addrs()
+		for _, addr := range addrs {
+			ip := addr.String()
+
+			isIPv6 := strings.Contains(ip, ":")
+			isLocalhost := strings.Contains(ip, "127.0.0.1")
+
+			if !isIPv6 && !isLocalhost {
+				return strings.Split(ip, "/")[0], nil
+			}
+		}
 	}
 
-	addrs, err := ifaces[2].Addrs()
-	if err != nil {
-		return nil, errors.New("FAILED TO FIND NETWORK INTERFACES ADDRESSES")
-	}
-
-	return addrs[0], nil
+	return "", errors.New("FAILED TO FIND IP ADDRESS")
 }
 
-func getEnv() (pwd string, host string, addr net.Addr) {
+func getEnv() (pwd string, host string, addr string) {
 	var err error
 
 	pwd, err = os.Getwd()
-	if err != nil {
-		log.Fatal("Failed to find working direcory")
-	}
+	if err != nil { log.Fatal(err) }
 
 	host, err = os.Hostname()
-	if err != nil {
-		log.Fatal("Failed to read machine name")
-	}
+	if err != nil { log.Fatal(err) }
 
-	addr, err = getLocalAddr(host)
-	if err != nil {
-		log.Fatal("Failed to find machine address in the local network")
-	}
+	addr, err = getIPAddr()
+	if err != nil { log.Fatal(err) }
 
 	return
 }
 
 func loadTmpl(tmplName string, path string) (tmpl *template.Template) {
 	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/web/%s.html", path, tmplName))
-	if err != nil {
-		log.Fatal(err)
-	}
+	if err != nil { log.Fatal(err) }
 
 	return
 }
 
 func contains(arr []string, value string) bool {
 	for _, v := range arr {
-		if v == value { return true }
+		if v == value {
+			return true
+		}
 	}
 
 	return false
