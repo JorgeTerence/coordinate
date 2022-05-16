@@ -11,9 +11,13 @@ import (
 )
 
 func getIPAddr() (string, error) {
-	ifaces, _ := net.Interfaces()
+	ifaces, err := net.Interfaces()
+	if err != nil { log.Fatal(err) }
+	
 	for _, i := range ifaces {
-		addrs, _ := i.Addrs()
+		addrs, err := i.Addrs()
+		if err != nil { log.Fatal(err) }
+
 		for _, addr := range addrs {
 			ip := addr.String()
 
