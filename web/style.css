@@ -1,26 +1,17 @@
-@charset "utf-8";
-
 @import "https://unpkg.com/open-props";
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
-
 :root {
-  --background: hsl(0, 0%, 100%);
-  --shadow: rgba(0 0 0 / 0.3);
-  --foreground: hsl(0, 0%, 5%);
+  --background: var(--gray-0);
+  --foreground: var(--gray-9);
 
   --active: var(--teal-6);
   --active-dimm: var(--teal-8);
-  --alt: hsl(260, 50%, 70%);
-  --error: hsl(352, 80%, 50%);
-
-  --fonts-sans: "Inter", Arial, Helvetica, sans-serif;
-  --font-mono: "JetBrains Mono", "Courier New", Courier, monospace;
+  --alt: var(--violet-3);
+  --error: var(--red-7);
 }
 
 * {
-  font-family: var(--fonts-sans);
+  font-family: var(--font-sans);
 }
 
 body {
@@ -33,7 +24,7 @@ ul {
   background-color: var(--background);
   padding: 0.75rem;
   border-radius: 0.5rem;
-  box-shadow: 1px 1px 4px var(--shadow);
+  box-shadow: var(--shadow-2);
   list-style-type: none;
 }
 
@@ -63,7 +54,7 @@ li {
 }
 
 li:is(:hover, :focus) {
-  box-shadow: 0 0 2px var(--shadow);
+  box-shadow: var(--shadow-1);
 }
 
 li:is(:hover, :focus) a {
@@ -84,15 +75,17 @@ a[download] {
   background-color: var(--active);
   color: var(--background);
   padding: 0.5rem 0.7rem;
+  padding-inline-end: 0.9rem;
   border-radius: 0.5rem;
-  box-shadow: 1px 1px 1px var(--shadow);
+  box-shadow: var(--shadow-1);
   display: inline-block;
+  text-align: center;
 }
 
 pre {
   border-radius: 0.5rem;
   padding: 0.75rem;
-  box-shadow: 1px 1px 4px var(--shadow);
+  box-shadow: var(--shadow-2);
   overflow: scroll;
   tab-size: 2ch;
 }
@@ -100,6 +93,7 @@ pre {
 code {
   background-color: var(--background);
   font-family: var(--font-mono);
+  font-size: 1.2em;
 }
 
 img, video {
@@ -109,13 +103,29 @@ img, video {
 }
 
 .error {
-  border: var(--error);
+  color: var(--error);
+  width: max-content;
+  margin-bottom: 1rem;
+  border: 2px dashed var(--error);
+  padding: 1rem;
+}
+
+.error::before {
+  content: "Error: ";
+}
+
+.material-symbols-outlined {
+  vertical-align: text-bottom;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 48;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: var(--gray-9);
-    --shadow: rgba(200 200 200 / 0.3);
-    --foreground: hsl(0, 0%, 95%);
+    --foreground: var(--gray-1);
   }
 }
