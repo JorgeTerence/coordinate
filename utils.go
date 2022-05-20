@@ -12,8 +12,10 @@ import (
 
 func getIPAddr() (string, error) {
 	ifaces, err := net.Interfaces()
-	if err != nil { log.Fatal(err) }
-	
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	for _, i := range ifaces {
 		addrs, err := i.Addrs()
 		if err != nil { log.Fatal(err) }
@@ -33,7 +35,7 @@ func getIPAddr() (string, error) {
 	return "", errors.New("FAILED TO FIND IP ADDRESS")
 }
 
-func getEnv() (pwd string, host string, addr string) {
+func loadEnv() (pwd string, host string, addr string) {
 	var err error
 
 	pwd, err = os.Getwd()
@@ -57,9 +59,7 @@ func loadTmpl(tmplName string, path string) (tmpl *template.Template) {
 
 func contains(arr []string, value string) bool {
 	for _, v := range arr {
-		if v == value {
-			return true
-		}
+		if v == value { return true }
 	}
 
 	return false
