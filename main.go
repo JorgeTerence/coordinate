@@ -12,9 +12,9 @@ const (
 	INSTALL_PATH string = "/home/jorge/Desktop/coordinate"
 )
 
-func main() {
-	pwd, host, addr := loadEnv()
+var pwd, host, addr = loadEnv()
 
+func main() {
 	http.HandleFunc("/", browse)
 
 	programFiles := http.FileServer(http.Dir(path.Join(INSTALL_PATH, "web")))

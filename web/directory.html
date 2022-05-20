@@ -15,12 +15,31 @@
         {{ range .Base.SplitPath }}
           <li>{{ . }}</li>
         {{ end }}
+        <div class="download-menu">
+          <span class="download-title">Dowload</span>
+          <a 
+            class="download-option"
+            href="{{ call $.Base.Util.PathJoin ("zip") ($.Base.Path) }}"
+          >
+            ZIP
+          </a>
+          <a
+            class="download-option"
+            href="{{ call $.Base.Util.PathJoin ("tar") ($.Base.Path) }}"
+          >
+            TAR
+          </a>
+        </div>
       </ul>
     {{ end }}
 
     <ul>
       {{ range .Entries }}
-        <li><a href="{{ call $.Base.Util.PathJoin ($.Base.Path) (.Name) }}">{{ .Name }}</a></li>
+        <li>
+          <a href="{{ call $.Base.Util.PathJoin ($.Base.Path) (.Name) }}">
+            {{ .Name }}
+          </a>
+        </li>
       {{ end }}
     </ul>
   </body>

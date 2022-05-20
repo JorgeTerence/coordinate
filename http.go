@@ -9,8 +9,6 @@ import (
 )
 
 var (
-	pwd, host, addr = loadEnv()
-
 	dirTmpl  = loadTmpl("directory", INSTALL_PATH)
 	fileTmpl = loadTmpl("file", INSTALL_PATH)
 	errTmpl  = loadTmpl("error", INSTALL_PATH)
@@ -24,7 +22,7 @@ type (
 		SplitPath []string
 		Util      UtilFuncs
 	}
-	
+
 	UtilFuncs struct {
 		PathJoin    func(...string) string
 		ArrContains func([]string, string) bool
@@ -74,4 +72,8 @@ func browse(w http.ResponseWriter, r *http.Request) {
 			errTmpl.Execute(w, ErrorData{pageData, err})
 		}
 	}
+}
+
+func upload(w http.ResponseWriter, r *http.Request) {
+	
 }
