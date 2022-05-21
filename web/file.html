@@ -16,16 +16,16 @@
     </ul>
 
     <a
-      href="{{ call .Base.Util.PathJoin ("/download/") (.Base.Path) }}"
+      href="{{ call .Base.PathJoin ("/download/") (.Base.Path) }}"
       download="{{ .Name }}"
     >
       <span class="material-symbols-outlined">file_download</span>
       <span>Download</span>
     </a>
     
-    {{ if call .Base.Util.ArrContains (call .Base.Util.Arr ".png" ".jpg" ".jpeg" ".webp" ".svg") (.Ext) }}
+    {{ if call .Base.ArrContains (call .Base.Arr ".png" ".jpg" ".jpeg" ".webp" ".svg") (.Ext) }}
       <img src="/download/{{ .Base.Path }}" alt="{{ .Name }}">
-    {{ else if call .Base.Util.ArrContains (call .Base.Util.Arr ".mp4" ".mov" ".avi" ".wmf") (.Ext) }}
+    {{ else if call .Base.ArrContains (call .Base.Arr ".mp4" ".mov" ".avi" ".wmf") (.Ext) }}
       <video controls src="/download/{{ .Base.Path }}"></video>
     {{ else }}
       <pre><code>{{ .Content }}</code></pre>

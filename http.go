@@ -14,17 +14,13 @@ var (
 	errTmpl  = loadTmpl("error", INSTALL_PATH)
 )
 
-// TODO: Restrcture types (be shorter) and create generator function
 type (
 	BaseData struct {
 		Host      string
 		Addr      string
 		Path      string
 		SplitPath []string
-		Util      UtilFuncs
-	}
 
-	UtilFuncs struct {
 		PathJoin    func(...string) string
 		ArrContains func([]string, string) bool
 		Arr         func(...string) []string
@@ -51,7 +47,7 @@ type (
 func browse(w http.ResponseWriter, r *http.Request) {
 	targetPath := path.Join(pwd, r.URL.Path)
 	target, err := os.Stat(targetPath)
-	pageData := BaseData{host, addr, r.URL.Path, strings.Split(r.URL.Path, "/")[1:], UtilFuncs{path.Join, contains, createArr}}
+	pageData := loadBaseData(r.URL.Path)
 
 	if err != nil {
 		errTmpl.Execute(w, ErrorData{pageData, err})
@@ -81,9 +77,9 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 	dirPath := strings.TrimPrefix(r.URL.Path, "/zip/")
 	archivePath := path.Join(pwd, path.Base(dirPath)+".zip")
 
-	pageData := BaseData{host, addr, r.URL.Path, strings.Split(r.URL.Path, "/")[1:], UtilFuncs{path.Join, contains, createArr}}
+	pageData := loadBaseData(r.URL.Path)
 
-	if err := zipDir(dirPath, archivePath, pageData); err != nil {
+	if err := zipDir(dirPath, archivePath); err != nil {
 		errTmpl.Execute(w, ErrorData{pageData, err})
 	}
 
@@ -93,6 +89,7 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errTmpl.Execute(w, ErrorData{pageData, err})
 	}
+
 	os.Remove(archivePath)
 
 	w.WriteHeader(http.StatusOK)

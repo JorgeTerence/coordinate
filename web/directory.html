@@ -18,13 +18,13 @@
           <span class="download-title">Dowload</span>
           <a 
             class="download-option"
-            href="/{{ call $.Base.Util.PathJoin ("zip") ($.Base.Path) }}"
+            href="/{{ call $.Base.PathJoin ("zip") ($.Base.Path) }}"
           >
             ZIP
           </a>
           <a
             class="download-option"
-            href="/{{ call $.Base.Util.PathJoin ("tar") ($.Base.Path) }}"
+            href="/{{ call $.Base.PathJoin ("tar") ($.Base.Path) }}"
           >
             TAR
           </a>
@@ -35,7 +35,7 @@
     <ul>
       {{ range .Entries }}
         <li>
-          <a href="{{ call $.Base.Util.PathJoin ($.Base.Path) (.Name) }}">
+          <a href="{{ call $.Base.PathJoin ($.Base.Path) (.Name) }}">
             {{ .Name }}
           </a>
         </li>

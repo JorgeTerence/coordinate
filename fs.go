@@ -7,7 +7,7 @@ import (
 	"path"
 )
 
-func zipDir(source string, target string, pageData BaseData) error {
+func zipDir(source string, target string) error {
 	f, err := os.Create(target)
 	if err != nil { return err }
 	defer f.Close()
@@ -19,7 +19,7 @@ func zipDir(source string, target string, pageData BaseData) error {
 	if err != nil { return err }
 
 	for _, entry := range dir {
-		if err := addFileToZip(w, target, path.Join(source, entry.Name())); err != nil {
+		if addToZip(w, target, path.Join(source, entry.Name())) != nil {
 			return err
 		}
 	}
@@ -27,7 +27,7 @@ func zipDir(source string, target string, pageData BaseData) error {
 	return nil
 }
 
-func addFileToZip(w *zip.Writer, archive string, target string) error {
+func addToZip(w *zip.Writer, archive string, target string) error {
 	file, err := os.Open(target)
 	if err != nil { return err }
 

@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"path"
 	"strings"
 )
 
@@ -55,6 +56,19 @@ func loadTmpl(tmplName string, path string) (tmpl *template.Template) {
 	if err != nil { log.Fatal(err) }
 
 	return
+}
+
+func loadBaseData(url string) BaseData {
+	return BaseData {
+		Host: host,
+		Addr: addr,
+		Path: url,
+		SplitPath: strings.Split(url, "/")[1:],
+		
+		PathJoin: path.Join,
+		ArrContains: contains,
+		Arr: createArr,
+	}
 }
 
 func contains(arr []string, value string) bool {
