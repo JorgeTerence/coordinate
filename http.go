@@ -14,6 +14,7 @@ var (
 	errTmpl  = loadTmpl("error", INSTALL_PATH)
 )
 
+// TODO: Restrcture types (be shorter) and create generator function
 type (
 	BaseData struct {
 		Host      string
@@ -74,6 +75,31 @@ func browse(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func upload(w http.ResponseWriter, r *http.Request) {
-	
+// FIXME: Won't work on nested directories
+// TODO: Better separation of concerns
+func downloadZip(w http.ResponseWriter, r *http.Request) {
+	dirPath := strings.TrimPrefix(r.URL.Path, "/zip/")
+	archivePath := path.Join(pwd, path.Base(dirPath)+".zip")
+
+	pageData := BaseData{host, addr, r.URL.Path, strings.Split(r.URL.Path, "/")[1:], UtilFuncs{path.Join, contains, createArr}}
+
+	if err := zipDir(dirPath, archivePath, pageData); err != nil {
+		errTmpl.Execute(w, ErrorData{pageData, err})
+	}
+
+	// FIXME: Use absolute paths
+	// TODO: Add propper file extension
+	archive, err := os.ReadFile(archivePath)
+	if err != nil {
+		errTmpl.Execute(w, ErrorData{pageData, err})
+	}
+	os.Remove(archivePath)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/zip")
+	w.Write(archive)
+}
+
+func downloadTar(w http.ResponseWriter, r *http.Request) {
+
 }
