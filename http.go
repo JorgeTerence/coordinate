@@ -45,7 +45,7 @@ type (
 )
 
 func browse(w http.ResponseWriter, r *http.Request) {
-	targetPath := path.Join(pwd, r.URL.Path)
+	targetPath := path.Join(baseDir, r.URL.Path)
 	target, err := os.Stat(targetPath)
 	pageData := loadBaseData(r.URL.Path)
 
@@ -75,7 +75,7 @@ func browse(w http.ResponseWriter, r *http.Request) {
 // TODO: Better separation of concerns
 func downloadZip(w http.ResponseWriter, r *http.Request) {
 	dirPath := strings.TrimPrefix(r.URL.Path, "/zip/")
-	archivePath := path.Join(pwd, path.Base(dirPath)+".zip")
+	archivePath := path.Join(baseDir, path.Base(dirPath)+".zip")
 
 	pageData := loadBaseData(r.URL.Path)
 
@@ -83,7 +83,6 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 		errTmpl.Execute(w, ErrorData{pageData, err})
 	}
 
-	// FIXME: Use absolute paths
 	// TODO: Add propper file extension
 	archive, err := os.ReadFile(archivePath)
 	if err != nil {

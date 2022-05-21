@@ -71,6 +71,14 @@ func loadBaseData(url string) BaseData {
 	}
 }
 
+func resolveBaseDir() string {
+	if len(os.Args) <= 1 || os.Args[1] == "." {
+		return pwd
+	}
+
+	return path.Join(pwd, os.Args[1])
+}
+
 func contains(arr []string, value string) bool {
 	for _, v := range arr {
 		if v == value { return true }
