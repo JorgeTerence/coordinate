@@ -16,7 +16,7 @@ Read the next section.
 
 - **GUI client:** people other than devs want to share their files. And my guess is that most of them don't usually use their terminal to navigate their file system. So a GUI client or a system tray action would be better suited.
 
-- **Customization:** allow ricers to spend 8 hours creating their own templates and stylesheets.
+- **Customization:** allow ricers to spend 8+ hours creating their own templates and stylesheets.
 
 - **QR code generator** for accessing the coordinate without typing a long network address.
 
@@ -26,8 +26,10 @@ Read the next section.
 - [ ] Add preview to formats like PDF, docx, xlsx
 - [ ] Be prepared to handle executables, encoded files and protected directories
 - [ ] Add file icons
-- [ ] Add syntax highlighting for programming languages
+- ~~[ ] Add syntax highlighting for programming languages~~
 - [ ] Fine tune styling
+- [ ] Add details like file sizes and creation date (maybe on a modal or detail panel)
+- [ ] Add upload functionality
 - [ ] More precise error messages
 
 ## Is the name insiperd by AOT?
