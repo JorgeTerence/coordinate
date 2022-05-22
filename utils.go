@@ -77,6 +77,10 @@ func resolveBaseDir() string {
 		return pwd
 	}
 
+	if path.IsAbs(os.Args[1]) {
+		return path.Clean(os.Args[1])
+	}
+
 	return path.Join(pwd, os.Args[1])
 }
 
