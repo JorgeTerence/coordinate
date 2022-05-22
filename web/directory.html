@@ -19,12 +19,14 @@
           <a 
             class="download-option"
             href="/{{ call $.Base.PathJoin ("zip") ($.Base.Path) }}"
+            download="{{ print (call .Base.Last (.Base.SplitPath)) (".zip") }}"
           >
             ZIP
           </a>
           <a
             class="download-option"
             href="/{{ call $.Base.PathJoin ("tar") ($.Base.Path) }}"
+            download="{{ print (call .Base.Last (.Base.SplitPath)) (".tar") }}"
           >
             TAR
           </a>

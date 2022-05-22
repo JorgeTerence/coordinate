@@ -24,6 +24,7 @@ type (
 		PathJoin    func(...string) string
 		ArrContains func([]string, string) bool
 		Arr         func(...string) []string
+		Last        func([]string) string
 	}
 
 	DirData struct {
@@ -80,10 +81,9 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 
 	if err := zipDir(dirPath, archivePath); err != nil {
 		errTmpl.Execute(w, ErrorData{pageData, err})
-		return 
+		return
 	}
 
-	// TODO: Add propper file extension
 	archive, err := os.ReadFile(archivePath)
 	if err != nil {
 		errTmpl.Execute(w, ErrorData{pageData, err})

@@ -125,7 +125,7 @@ a:visited {
   color: var(--active-dimm);
 }
 
-a[download] {
+a[download]:not(.download-option) {
   background-color: var(--active);
   color: var(--background);
   padding: 0.5rem 0.7rem;

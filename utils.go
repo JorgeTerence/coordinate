@@ -68,6 +68,7 @@ func loadBaseData(url string) BaseData {
 		PathJoin: path.Join,
 		ArrContains: contains,
 		Arr: createArr,
+		Last: lastOfArr,
 	}
 }
 
@@ -89,4 +90,8 @@ func contains(arr []string, value string) bool {
 
 func createArr(args ...string) []string {
 	return args
+}
+
+func lastOfArr(arr []string) string {
+	return arr[len(arr)-1]
 }
