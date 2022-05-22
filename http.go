@@ -71,27 +71,27 @@ func browse(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// FIXME: Won't work on nested directories
 // TODO: Better separation of concerns
 func downloadZip(w http.ResponseWriter, r *http.Request) {
-	dirPath := strings.TrimPrefix(r.URL.Path, "/zip/")
-	archivePath := path.Join(baseDir, path.Base(dirPath)+".zip")
+	dirPath := path.Join(baseDir, strings.TrimPrefix(r.URL.Path, "/zip/"))
+	archivePath := path.Join(baseDir, path.Base(dirPath)+"-coordinate-temp.zip")
 
 	pageData := loadBaseData(r.URL.Path)
 
 	if err := zipDir(dirPath, archivePath); err != nil {
 		errTmpl.Execute(w, ErrorData{pageData, err})
+		return 
 	}
 
 	// TODO: Add propper file extension
 	archive, err := os.ReadFile(archivePath)
 	if err != nil {
 		errTmpl.Execute(w, ErrorData{pageData, err})
+		return
 	}
 
 	os.Remove(archivePath)
 
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/zip")
 	w.Write(archive)
 }
