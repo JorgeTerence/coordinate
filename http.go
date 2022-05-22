@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/fs"
 	"net/http"
 	"os"
@@ -75,11 +76,13 @@ func browse(w http.ResponseWriter, r *http.Request) {
 // TODO: Better separation of concerns
 func downloadZip(w http.ResponseWriter, r *http.Request) {
 	dirPath := path.Join(baseDir, strings.TrimPrefix(r.URL.Path, "/zip/"))
-	archivePath := path.Join(baseDir, path.Base(dirPath)+"-coordinate-temp.zip")
+	archiveName := fmt.Sprintf("%s.zip",  path.Base(dirPath))
 
 	pageData := loadBaseData(r.URL.Path)
 
-	if err := zipDir(dirPath, archivePath); err != nil {
+	archivePath, err := zipDir(dirPath, archiveName)
+
+	if err != nil {
 		errTmpl.Execute(w, ErrorData{pageData, err})
 		return
 	}
@@ -90,7 +93,7 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	os.Remove(archivePath)
+	os.Remove(archiveName)
 
 	w.Header().Set("Content-Type", "application/zip")
 	w.Write(archive)
