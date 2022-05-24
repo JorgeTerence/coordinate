@@ -2,15 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/pkg/browser"
 	"net/http"
 	"path"
 )
 
 const (
 	PORT         int32  = 8080
-	INSTALL_PATH string = "/home/jorge/Desktop/coordinate"
-	MODE                = "development"
+	INSTALL_PATH string = "/usr/share/coordinate"
 )
 
 var (
@@ -33,10 +31,6 @@ func main() {
 
 	fmt.Printf("Serving from %s on http://%s:%d\n", host, addr, PORT)
 	fmt.Printf("Base directory: %s\n", baseDir)
-
-	if MODE != "development" && MODE != "dev" {
-		browser.OpenURL(fmt.Sprintf("http://localhost:%d", PORT))
-	}
 
 	http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
 }

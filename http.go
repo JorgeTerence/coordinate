@@ -76,7 +76,7 @@ func browse(w http.ResponseWriter, r *http.Request) {
 // TODO: Better separation of concerns
 func downloadZip(w http.ResponseWriter, r *http.Request) {
 	dirPath := path.Join(baseDir, strings.TrimPrefix(r.URL.Path, "/zip/"))
-	archiveName := fmt.Sprintf("%s.zip",  path.Base(dirPath))
+	archiveName := fmt.Sprintf("%s.zip", path.Base(dirPath))
 
 	pageData := loadBaseData(r.URL.Path)
 
