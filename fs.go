@@ -2,14 +2,17 @@ package main
 
 import (
 	"archive/zip"
+	"fmt"
 	"io"
+	"math/rand"
 	"os"
 	"path"
 )
 
-func zipDir(source string, archive string) ([]byte, error) {
+// FIXME: Final archive is broken - check if problem lies on back-end (here) or front-end (sending to browser)
+func zipDir(source string) ([]byte, error) {
 	// Create archive file and file handler
-	f, err := os.CreateTemp("", archive)
+	f, err := os.CreateTemp("", fmt.Sprint(rand.Int()))
 	if err != nil { return nil, err }
 	defer f.Close()
 
@@ -17,54 +20,51 @@ func zipDir(source string, archive string) ([]byte, error) {
 	defer w.Close()
 
 	// Recursively add all files and directories in the target directory
-	// return f.Name(), addDirToArchive(w, archive, source, "")
-	err = addDirToArchive(w, archive, source, "")
-	if err != nil { return nil, err }
-
-	target, err := os.ReadFile(f.Name())
-	if err != nil { return nil, err }
-
-	os.Remove(f.Name())
-
-	return target, nil
-}
-
-func addDirToArchive(w *zip.Writer, archive string, dirPath string, nestPath string) error {
-	// Read list of files
-	dir, err := os.ReadDir(dirPath)
-	if err != nil { return err }
-
-	for _, entry := range dir {
-		// If the entry is a directory, call the cuntion recursively
-		// `dirPath` is where the function tries to read files from
-		// `nestPath` is the then directory structure inside the zip archive
-		if entry.IsDir() {
-			if err := addDirToArchive(w, archive, path.Join(dirPath, entry.Name()), path.Join(nestPath, entry.Name())); err != nil {
-				return err
-			}
-
-			continue
-		}
-
-		// Else add regular file to archive
-		file, err := os.Open(path.Join(dirPath, entry.Name()))
-		if err != nil { return err }
-
-		info, err := file.Stat()
-		if err != nil { return err }
-
-		header, err := zip.FileInfoHeader(info)
-		if err != nil { return err }
-
-		header.Method = zip.Deflate
-		header.Name = path.Join(nestPath, header.Name)
-
-		headerWriter, err := w.CreateHeader(header)
-		if err != nil { return err }
-
-		_, err = io.Copy(headerWriter, file)
-		if err != nil { return err }
+	if err = copyToZip(w, source, ""); err != nil {
+		return nil, err 
 	}
 
-	return nil
+	// Read archive's content and delete the file
+	archive, err := os.ReadFile(f.Name())
+	if err != nil { return nil, err }
+
+	if err := os.Remove(f.Name()); err != nil {
+		return nil, err
+	}
+
+	return archive, nil
+}
+
+func copyToZip(w *zip.Writer, source string, nest string) error {
+	info, err := os.Stat(source)
+	if err != nil { return err }
+
+	// If the source is a directory, call the funtion recursively
+	if info.IsDir() {
+		dir, err := os.ReadDir(source)
+		if err != nil { return err }
+
+		for _, entry := range dir {
+			if err := copyToZip(w, path.Join(source, entry.Name()), path.Join(nest, entry.Name())); err != nil {
+				return err
+			}
+		}
+	} 
+	
+	// Else (it's a file), add it to the archive
+	file, err := os.Open(source)
+	if err != nil { return err }
+	defer file.Close()
+
+	header, err := zip.FileInfoHeader(info)
+	if err != nil { return err }
+
+	header.Method = zip.Deflate
+	header.Name = path.Join(nest, header.Name)
+
+	headerWriter, err := w.CreateHeader(header)
+	if err != nil { return err }
+
+	_, err = io.Copy(headerWriter, file)
+	return err
 }
