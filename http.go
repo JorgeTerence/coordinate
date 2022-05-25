@@ -80,20 +80,12 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 
 	pageData := loadBaseData(r.URL.Path)
 
-	archivePath, err := zipDir(dirPath, archiveName)
+	archive, err := zipDir(dirPath, archiveName)
 
 	if err != nil {
 		errTmpl.Execute(w, ErrorData{pageData, err})
 		return
 	}
-
-	archive, err := os.ReadFile(archivePath)
-	if err != nil {
-		errTmpl.Execute(w, ErrorData{pageData, err})
-		return
-	}
-
-	os.Remove(archiveName)
 
 	w.Header().Set("Content-Type", "application/zip")
 	w.Write(archive)
