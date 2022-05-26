@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/fs"
+	"log"
 	"net/http"
 	"os"
 	"path"
@@ -50,8 +51,11 @@ func browse(w http.ResponseWriter, r *http.Request) {
 	target, err := os.Stat(targetPath)
 	pageData := loadBaseData(r.URL.Path)
 
+	log.Printf("\033[32mGET:\033[0m %s", path.Clean(r.URL.Path))
+
 	if err != nil {
 		errTmpl.Execute(w, ErrorData{pageData, err})
+		log.Printf("\033[31mERROR:\033[0m %s", err)
 		return
 	}
 
@@ -60,6 +64,7 @@ func browse(w http.ResponseWriter, r *http.Request) {
 		dirTmpl.Execute(w, DirData{pageData, dir})
 
 		if err != nil {
+			log.Printf("\033[31mERROR:\033[0m %s", err)
 			errTmpl.Execute(w, ErrorData{pageData, err})
 		}
 	} else {
@@ -67,24 +72,28 @@ func browse(w http.ResponseWriter, r *http.Request) {
 		fileTmpl.Execute(w, FileData{pageData, string(file), path.Base(targetPath), path.Ext(targetPath)})
 
 		if err != nil {
+			log.Printf("\033[31mERROR:\033[0m %s", err)
 			errTmpl.Execute(w, ErrorData{pageData, err})
 		}
 	}
 }
 
 func downloadZip(w http.ResponseWriter, r *http.Request) {
-	// TODO: Add logging for incoming requests and errors
-	dirPath := path.Join(baseDir, strings.TrimPrefix(r.URL.Path, "/zip/"))
+	targetPath := strings.TrimPrefix(r.URL.Path, "/zip/")
 	pageData := loadBaseData(r.URL.Path)
 
-	archivePath, err := zipTmp(dirPath)
+	log.Printf("\033[33mZIP:\033[0m %s", path.Clean(targetPath))
+	
+	archivePath, err := zipTmp(path.Join(baseDir, targetPath))
 	if err != nil {
+		log.Printf("\033[31mERROR:\033[0m %s", err)
 		errTmpl.Execute(w, ErrorData{pageData, err})
 		return
 	}
 
 	archive, err := os.ReadFile(archivePath)
 	if err != nil {
+		log.Printf("\033[31mERROR:\033[0m %s", err)
 		errTmpl.Execute(w, ErrorData{pageData, err})
 		return
 	}
@@ -96,5 +105,9 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 }
 
 func downloadTar(w http.ResponseWriter, r *http.Request) {
+	targetPath := strings.TrimPrefix(r.URL.Path, "/zip/")
+	// dirPath := path.Join(baseDir, targetPath)
+	// pageData := loadBaseData(r.URL.Path)
 
+	log.Printf("\033[33mTAR:\033[0m %s", path.Clean(targetPath))
 }
