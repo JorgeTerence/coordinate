@@ -83,8 +83,9 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 	pageData := loadBaseData(r.URL.Path)
 
 	log.Printf("\033[33mZIP:\033[0m %s", path.Clean(targetPath))
-	
-	archivePath, err := zipTmp(path.Join(baseDir, targetPath))
+
+	// TODO: Use enums
+	archivePath, err := createTempArchive(path.Join(baseDir, targetPath), "zip")
 	if err != nil {
 		log.Printf("\033[31mERROR:\033[0m %s", err)
 		errTmpl.Execute(w, ErrorData{pageData, err})
@@ -105,9 +106,27 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 }
 
 func downloadTar(w http.ResponseWriter, r *http.Request) {
-	targetPath := strings.TrimPrefix(r.URL.Path, "/zip/")
-	// dirPath := path.Join(baseDir, targetPath)
-	// pageData := loadBaseData(r.URL.Path)
+	targetPath := strings.TrimPrefix(r.URL.Path, "/tar/")
+	pageData := loadBaseData(r.URL.Path)
 
 	log.Printf("\033[33mTAR:\033[0m %s", path.Clean(targetPath))
+
+	archivePath, err := createTempArchive(path.Join(baseDir, targetPath), "tar")
+	if err != nil {
+		log.Printf("\033[31mERROR:\033[0m %s", err)
+		errTmpl.Execute(w, ErrorData{pageData, err})
+		return
+	}
+
+	archive, err := os.ReadFile(archivePath)
+	if err != nil {
+		log.Printf("\033[31mERROR:\033[0m %s", err)
+		errTmpl.Execute(w, ErrorData{pageData, err})
+		return
+	}
+
+	os.Remove(archivePath)
+
+	w.Header().Set("Content-Type", "application/zip")
+	w.Write(archive)
 }

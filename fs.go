@@ -1,33 +1,50 @@
 package main
 
 import (
+	"archive/tar"
 	"archive/zip"
+	"errors"
 	"io"
 	"os"
 	"path"
+	"strings"
 )
 
-// Creates temporary file with a zip-archived copy of `source`
+// Creates temporary file for a .zip or .tar.gz archive of `source`
 // Remember to remove file afterwards: `os.Remove(archivePath)`
-func zipTmp(source string) (string, error) {
+func createTempArchive(source, format string) (string, error) {
 
 	// Create archive file and file handler
 	f, err := os.CreateTemp("", path.Base(source))
 	if err != nil { return "", err }
 	defer f.Close()
+	
+	switch strings.Trim(strings.ToLower(format), " ") {
+	case "zip":
+		w := zip.NewWriter(f)
+		defer w.Close()
 
-	w := zip.NewWriter(f)
-	defer w.Close()
+		// Recursively add all files and directories in the target directory
+		if err = copyToZip(w, source, ""); err != nil {
+			return "", err
+		}
+	
+	case "tar":
+		w := tar.NewWriter(f)
+		defer w.Close()
 
-	// Recursively add all files and directories in the target directory
-	if err = copyToZip(w, source, ""); err != nil {
-		return "", err
+		if err := copyToTar(w, source, ""); err != nil {
+			return "", err
+		}
+
+	default: 
+		return "", errors.New("`format` MUST BE EITHER \"zip\" or \"tar\"")
 	}
 
 	return f.Name(), err
 }
 
-func copyToZip(w *zip.Writer, source string, nest string) error {
+func copyToZip(w *zip.Writer, source, nest string) error {
 	info, err := os.Stat(source)
 	if err != nil { return err }
 
@@ -64,4 +81,8 @@ func copyToZip(w *zip.Writer, source string, nest string) error {
 
 	_, err = io.Copy(headerWriter, file)
 	return err
+}
+	
+func copyToTar(w *tar.Writer, source, nest string) error {
+	return nil
 }
