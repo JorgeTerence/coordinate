@@ -72,18 +72,24 @@ func browse(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// TODO: Better separation of concerns
 func downloadZip(w http.ResponseWriter, r *http.Request) {
+	// TODO: Add logging for incoming requests and errors
 	dirPath := path.Join(baseDir, strings.TrimPrefix(r.URL.Path, "/zip/"))
-
 	pageData := loadBaseData(r.URL.Path)
 
-	archive, err := zipDir(dirPath)
-
+	archivePath, err := zipTmp(dirPath)
 	if err != nil {
 		errTmpl.Execute(w, ErrorData{pageData, err})
 		return
 	}
+
+	archive, err := os.ReadFile(archivePath)
+	if err != nil {
+		errTmpl.Execute(w, ErrorData{pageData, err})
+		return
+	}
+
+	os.Remove(archivePath)
 
 	w.Header().Set("Content-Type", "application/zip")
 	w.Write(archive)
