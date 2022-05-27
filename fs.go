@@ -82,7 +82,42 @@ func copyToZip(w *zip.Writer, source, nest string) error {
 	_, err = io.Copy(headerWriter, file)
 	return err
 }
-	
+
 func copyToTar(w *tar.Writer, source, nest string) error {
-	return nil
+	info, err := os.Stat(source)
+	if err != nil { return err }
+
+	if info.IsDir() {
+		dir, err := os.ReadDir(source)
+		if err != nil { return err }
+
+		for _, entry := range dir {
+			if err := copyToTar(w, path.Join(source, entry.Name()), path.Join(nest, entry.Name())); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}
+
+	f, err := os.Open(source)
+	if err != nil { return err }
+	defer f.Close()
+
+	content, err := os.ReadFile(source)
+	if err != nil { return err }
+
+	header := &tar.Header{
+		Name: path.Join(nest, path.Base(f.Name())),
+		Mode: int64(info.Mode()),
+		Size: int64(len(string(content))),
+	}
+
+	if err := w.WriteHeader(header); err != nil {
+		return err
+	}
+
+	_, err = w.Write(content)
+	return err
 }
+
