@@ -24,8 +24,9 @@ func createTempArchive(source, format string) (string, error) {
 		w := zip.NewWriter(f)
 		defer w.Close()
 
+		// TODO: Implement both as a single function (pattern matching)
 		// Recursively add all files and directories in the target directory
-		if err = copyToZip(w, source, ""); err != nil {
+		if err = copyToZip(w, source, path.Base(source)); err != nil {
 			return "", err
 		}
 	
@@ -33,7 +34,7 @@ func createTempArchive(source, format string) (string, error) {
 		w := tar.NewWriter(f)
 		defer w.Close()
 
-		if err := copyToTar(w, source, ""); err != nil {
+		if err := copyToTar(w, source, path.Base(source)); err != nil {
 			return "", err
 		}
 
