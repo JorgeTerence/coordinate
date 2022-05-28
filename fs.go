@@ -3,43 +3,46 @@ package main
 import (
 	"archive/tar"
 	"archive/zip"
-	"errors"
+	"compress/gzip"
 	"io"
 	"os"
 	"path"
-	"strings"
+)
+
+type Archive int
+
+const (
+	ZIP Archive = iota
+	TAR
 )
 
 // Creates temporary file for a .zip or .tar.gz archive of `source`
 // Remember to remove file afterwards: `os.Remove(archivePath)`
-func createTempArchive(source, format string) (string, error) {
+func createTempArchive(source string, format Archive) (string, error) {
 
 	// Create archive file and file handler
 	f, err := os.CreateTemp("", path.Base(source))
 	if err != nil { return "", err }
 	defer f.Close()
 	
-	switch strings.Trim(strings.ToLower(format), " ") {
-	case "zip":
+	switch format {
+	case Archive(ZIP):
 		w := zip.NewWriter(f)
 		defer w.Close()
 
 		// TODO: Implement both as a single function (pattern matching)
-		// Recursively add all files and directories in the target directory
+		// TODO: Better logic for this
 		if err = copyToZip(w, source, path.Base(source)); err != nil {
 			return "", err
 		}
 	
-	case "tar":
+	case Archive(TAR):
 		w := tar.NewWriter(f)
 		defer w.Close()
 
 		if err := copyToTar(w, source, path.Base(source)); err != nil {
 			return "", err
 		}
-
-	default: 
-		return "", errors.New("`format` MUST BE EITHER \"zip\" or \"tar\"")
 	}
 
 	return f.Name(), err
@@ -122,3 +125,17 @@ func copyToTar(w *tar.Writer, source, nest string) error {
 	return err
 }
 
+func compress(source string) (string, error) {
+	archive, err := os.CreateTemp("", path.Base(source))
+	if err != nil { return "", err }
+	defer archive.Close()
+
+	w := gzip.NewWriter(archive)
+	defer w.Close()
+
+	f, err := os.Open(source)
+	if err != nil { return "", err }
+
+	_, err = io.Copy(w, f)
+	return archive.Name(), err
+}

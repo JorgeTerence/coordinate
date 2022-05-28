@@ -85,7 +85,7 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 	log.Printf("\033[33mZIP:\033[0m %s", path.Clean(targetPath))
 
 	// TODO: Use enums
-	archivePath, err := createTempArchive(path.Join(baseDir, targetPath), "zip")
+	archivePath, err := createTempArchive(path.Join(baseDir, targetPath), Archive(ZIP))
 	if err != nil {
 		log.Printf("\033[31mERROR:\033[0m %s", err)
 		errTmpl.Execute(w, ErrorData{pageData, err})
@@ -111,7 +111,7 @@ func downloadTar(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("\033[33mTAR:\033[0m %s", path.Clean(targetPath))
 
-	archivePath, err := createTempArchive(path.Join(baseDir, targetPath), "tar")
+	archivePath, err := createTempArchive(path.Join(baseDir, targetPath), Archive(TAR))
 	if err != nil {
 		log.Printf("\033[31mERROR:\033[0m %s", err)
 		errTmpl.Execute(w, ErrorData{pageData, err})

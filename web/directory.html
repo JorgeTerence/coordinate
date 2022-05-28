@@ -26,7 +26,7 @@
           <a
             class="download-option"
             href="/{{ call $.Base.PathJoin ("tar") ($.Base.Path) }}"
-            download="{{ print (call .Base.Last (.Base.SplitPath)) (".tar") }}"
+            download="{{ print (call .Base.Last (.Base.SplitPath)) (".tar.gz") }}"
           >
             TAR
           </a>
@@ -40,7 +40,7 @@
           <a class="download-option" href="/zip/. }}" download="coordinate.zip">
             ZIP
           </a>
-          <a class="download-option" href="/tar/." download="coordinate.tar">
+          <a class="download-option" href="/tar/." download="coordinate.tar.gz">
             TAR
           </a>
         </div>
