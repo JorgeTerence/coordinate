@@ -2,8 +2,6 @@ package main
 
 import (
 	"archive/tar"
-	"compress/gzip"
-	"io"
 	"os"
 	"path"
 )
@@ -33,7 +31,7 @@ func copyToTar(w *tar.Writer, source, nest string) error {
 	if err != nil { return err }
 
 	header := &tar.Header{
-		Name: path.Join(nest, path.Base(f.Name())),
+		Name: nest,
 		Mode: int64(info.Mode()),
 		Size: int64(len(string(content))),
 	}
@@ -44,19 +42,4 @@ func copyToTar(w *tar.Writer, source, nest string) error {
 
 	_, err = w.Write(content)
 	return err
-}
-
-func compress(source string) (string, error) {
-	archive, err := os.CreateTemp("", path.Base(source))
-	if err != nil { return "", err }
-	defer archive.Close()
-
-	w := gzip.NewWriter(archive)
-	defer w.Close()
-
-	f, err := os.Open(source)
-	if err != nil { return "", err }
-
-	_, err = io.Copy(w, f)
-	return archive.Name(), err
 }
