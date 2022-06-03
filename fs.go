@@ -8,25 +8,6 @@ import (
 	"path"
 )
 
-// Creates temporary file for a .tar.gz archive of `source`
-// Remember to remove file afterwards: `os.Remove(archivePath)`
-func createTempArchive(source string) (string, error) {
-
-	// Create archive file and file handler
-	f, err := os.CreateTemp("", path.Base(source))
-	if err != nil { return "", err }
-	defer f.Close()
-	
-	w := tar.NewWriter(f)
-	defer w.Close()
-
-	if err := copyToTar(w, source, path.Base(source)); err != nil {
-		return "", err
-	}
-
-	return f.Name(), err
-}
-
 func copyToTar(w *tar.Writer, source, nest string) error {
 	info, err := os.Stat(source)
 	if err != nil { return err }

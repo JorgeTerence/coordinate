@@ -1,6 +1,7 @@
 package main
 
 import (
+	"archive/tar"
 	"io/fs"
 	"log"
 	"net/http"
@@ -84,22 +85,14 @@ func downloadTar(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("\033[33mTAR:\033[0m %s", path.Clean(targetPath))
 
-	archivePath, err := createTempArchive(path.Join(baseDir, targetPath))
-	if err != nil {
-		log.Printf("\033[31mERROR:\033[0m %s", err)
-		errTmpl.Execute(w, ErrorData{pageData, err})
-		return
-	}
-
-	archive, err := os.ReadFile(archivePath)
-	if err != nil {
-		log.Printf("\033[31mERROR:\033[0m %s", err)
-		errTmpl.Execute(w, ErrorData{pageData, err})
-		return
-	}
-
-	os.Remove(archivePath)
-
 	w.Header().Set("Content-Type", "application/zip")
-	w.Write(archive)
+
+	tw := tar.NewWriter(w)
+	defer tw.Close()
+
+	if err := copyToTar(tw, path.Join(baseDir, targetPath), path.Base(targetPath)); err != nil {
+		log.Printf("\033[31mERROR:\033[0m %s", err)
+		errTmpl.Execute(w, ErrorData{pageData, err})
+		return
+	}
 }
