@@ -14,36 +14,18 @@
         {{ range .Base.SplitPath }}
           <li>{{ . }}</li>
         {{ end }}
-        <div class="download-menu">
-          <span class="download-title">Dowload</span>
-          <a 
-            class="download-option"
-            href="/{{ call $.Base.PathJoin ("zip") ($.Base.Path) }}"
-            download="{{ print (call .Base.Last (.Base.SplitPath)) (".zip") }}"
-          >
-            ZIP
-          </a>
-          <a
-            class="download-option"
-            href="/{{ call $.Base.PathJoin ("tar") ($.Base.Path) }}"
-            download="{{ print (call .Base.Last (.Base.SplitPath)) (".tar.gz") }}"
-          >
-            TAR
-          </a>
-        </div>
+        <a
+          class="download-menu"
+          href="/{{ call $.Base.PathJoin ("tar") ($.Base.Path) }}"
+          download="{{ print (call .Base.Last (.Base.SplitPath)) (".tar.gz") }}"
+        >
+          Download
+        </a>
       </ul>
     {{ else }}
       <ul class="path">
         <li>~</li>
-        <div class="download-menu">
-          <span class="download-title">Dowload</span>
-          <a class="download-option" href="/zip/. }}" download="coordinate.zip">
-            ZIP
-          </a>
-          <a class="download-option" href="/tar/." download="coordinate.tar.gz">
-            TAR
-          </a>
-        </div>
+        <a class="download-menu" href="/tar/." download="coordinate.tar.gz">Download</a>
       </ul>
     {{ end }}
 

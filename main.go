@@ -25,8 +25,6 @@ func main() {
 	downloadFiles := http.FileServer(http.Dir(baseDir))
 	http.Handle("/download/", http.StripPrefix("/download/", downloadFiles))
 
-	http.HandleFunc("/zip/", downloadZip)
-
 	http.HandleFunc("/tar/", downloadTar)
 
 	fmt.Printf("Serving from %s on http://%s:%d\n", host, addr, PORT)
