@@ -4,10 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
-
-	// "bytes"
-	// "compress/gzip"
-	// "io"
+	"io"
 	"io/fs"
 	"log"
 	"net/http"
@@ -87,11 +84,12 @@ func browse(w http.ResponseWriter, r *http.Request) {
 
 func downloadTar(w http.ResponseWriter, r *http.Request) {
 	target := strings.TrimPrefix(r.URL.Path, "/tar/")
+	targetPath := path.Join(baseDir, target)
 	pageData := loadBaseData(r.URL.Path)
 
 	log.Printf("\033[33mTAR:\033[0m %s", path.Clean(target))
 
-	w.Header().Set("Content-Type", "application/zip")
+	w.Header().Set("Content-Type", "application/tar")
 
 	var buf bytes.Buffer
 
@@ -99,20 +97,19 @@ func downloadTar(w http.ResponseWriter, r *http.Request) {
 	tw := tar.NewWriter(&buf)
 	defer tw.Close()
 
-	if err := copyToTar(tw, path.Join(baseDir, target), path.Base(target)); err != nil {
+	if err := copyToTar(tw, targetPath, path.Base(targetPath)); err != nil {
 		log.Printf("\033[31mERROR:\033[0m %s", err)
 		errTmpl.Execute(w, ErrorData{pageData, err})
 		return
 	}
 
 	// Compress tarball using gzip
-	// FIXME: `tar: Unexpected EOF in archive`
+	// FIXME: tar: Unexpected EOF in archive
 	zw := gzip.NewWriter(w)
 	defer zw.Close()
-	
-	if _, err := zw.Write(buf.Bytes()); err != nil {
+
+	if _, err := io.Copy(zw, &buf); err != nil {
 		log.Printf("\033[31mERROR:\033[0m %s", err)
 		errTmpl.Execute(w, ErrorData{pageData, err})
-		return
 	}
 }

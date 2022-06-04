@@ -68,53 +68,6 @@ li:is(:hover, :focus) a {
   color: var(--alt);
 }
 
-.download-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 6px;
-  position: absolute;
-  top: calc(1.5ch - 12px);
-  right: 1rem;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  transition: all 300ms ease-in-out;
-}
-
-.download-menu:hover {
-  background-color: var(--background);
-  border: var(--border);
-  margin-bottom: 4px;
-}
-
-.download-title {
-  background-color: var(--active);
-  color: var(--background);
-  border: 1px solid var(--active-dimm);
-  border-radius: 6px;
-  padding: 4px;
-  cursor: pointer;
-  transition: all 300ms;
-}
-
-.download-menu:hover .download-title {
-  background-color: var(--background);
-  color: var(--active);
-}
-
-.download-option {
-  opacity: 0;
-  transition: all 500ms;
-}
-
-.download-option::before {
-  content: "> ";
-}
-
-.download-menu:hover .download-option {
-  opacity: 1;
-}
-
 a {
   text-decoration: none;
   color: var(--active);
@@ -125,15 +78,23 @@ a:visited {
   color: var(--active-dimm);
 }
 
-a[download]:not(.download-option) {
+a[download] {
   background-color: var(--active);
   color: var(--background);
   padding: 0.5rem 0.7rem;
   padding-inline-end: 0.9rem;
+  border: 1px solid transparent;
   border-radius: 0.5rem;
   box-shadow: var(--shadow-1);
   display: inline-block;
   text-align: center;
+  transition: all 300ms ease-in-out;
+}
+
+a[download]:hover {
+  background-color: var(--background);
+  border: var(--border);
+  margin-bottom: 4px;
 }
 
 pre {

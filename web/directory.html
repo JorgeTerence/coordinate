@@ -9,26 +9,31 @@
   <body>
     <h1>Coordinate on <a title="{{ .Base.Addr }}" href="/">{{ .Base.Host }}</a></h1>
 
-    {{ if ne (index .Base.SplitPath 0) ("") }}
-      <ul class="path">
+    <ul class="path">
+      {{/* If it's the root dir, show "~" */}}
+      {{ if eq (index .Base.SplitPath 0) ("") }}
+        <li>~</li>
+      {{ else }}
         {{ range .Base.SplitPath }}
           <li>{{ . }}</li>
         {{ end }}
-        <a
-          class="download-menu"
-          href="/{{ call $.Base.PathJoin ("tar") ($.Base.Path) }}"
-          download="{{ print (call .Base.Last (.Base.SplitPath)) (".tar.gz") }}"
-        >
-          Download
-        </a>
-      </ul>
-    {{ else }}
-      <ul class="path">
-        <li>~</li>
-        <a class="download-menu" href="/tar/." download="coordinate.tar.gz">Download</a>
-      </ul>
-    {{ end }}
+      {{ end }}
+    </ul>
 
+    <a
+      {{/* If it's the root dir, use `coordinate.tar.gz` */}}
+      {{ if eq (index .Base.SplitPath 0) ("") }}
+        class="download" href="/tar/." download="coordinate.tar.gz"
+      {{ else }}
+        class="download"
+        href="/{{ call $.Base.PathJoin ("tar") ($.Base.Path) }}"
+        download="{{ print (call .Base.Last (.Base.SplitPath)) (".tar.gz") }}"
+      {{ end }}
+    >
+      <span class="material-symbols-outlined">file_download</span>
+      Download
+    </a>
+    
     <ul>
       {{ range .Entries }}
         <li>
