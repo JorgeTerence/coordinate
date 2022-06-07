@@ -17,11 +17,11 @@ make install
 
 - [x] Download functionality
 - [ ] Upload functionality
-- [ ] Compressed download functionality
-- [ ] Fine tune styling
+- [x] Compressed download functionality
+- [x] Fine tune styling
 - [ ] Details like file sizes and creation date
 - [ ] File icons
-- [ ] QR Code generator
+- [x] QR Code generator
 - [ ] Preview to formats like PDF, docx, xlsx
 - [ ] Handle executables, encoded files and protected directories
 - [ ] Packaging for various systems

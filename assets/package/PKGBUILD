@@ -1,0 +1,31 @@
+pkgname=coordinate
+pkgver=0.8.0
+pkgrel=1
+pkgdesc='A file sharing utility'
+arch=('x86_64')
+url="https://github.com/JorgeTerence/$pkgname"
+license=('GPL')
+makedepends=('go')
+source=("git+$url.git")
+sha256sums=('SKIP')
+
+# TODO: Add testing add `check()` step
+
+prepare() {
+  mkdir -p build
+  mkdir -p "/usr/share/$pkgname"
+  mkdir -p "/usr/share/$pkgname/web"
+}
+
+build() {
+  cd $pkgname
+  export GOFLAGS="-buildmode=pie -trimpath -ldflags=-linkmode=external -mod=readonly -modcacherw"
+  # go mod tidy
+  go build -o "build/$pkgname"
+}
+
+package() {
+  cd $pkgname
+  install -Dm755 "build/$pkgname" "/usr/bin/$pkgname"
+  install -Dm644 web/* "/usr/share/$pkgname"
+}
