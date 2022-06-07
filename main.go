@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"path"
+	"os"
+	qr "github.com/mdp/qrterminal/v3"
 )
 
 const (
@@ -27,8 +29,11 @@ func main() {
 
 	http.HandleFunc("/tar/", downloadTar)
 
-	fmt.Printf("Serving from %s on http://%s:%d\n", host, addr, PORT)
-	fmt.Printf("Base directory: %s\n", baseDir)
+	url := fmt.Sprintf("http://%s:%d", addr, PORT)
+
+	fmt.Printf("Serving from %s on %s\n", host, url)
+	fmt.Printf("Base directory: %s\n\n", baseDir)
+	qr.GenerateHalfBlock(url, qr.L, os.Stdout)
 
 	http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
 }
