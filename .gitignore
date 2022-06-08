@@ -1,4 +1,7 @@
-/node_modules/
-package.json
-package-lock.json
 .vscode
+
+/assets/package/aur/coordinate
+/assets/package/aur/pkg
+/assets/package/aur/src
+
+*.pkg.tar.zst
