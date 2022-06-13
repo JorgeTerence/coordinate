@@ -99,3 +99,12 @@ func createArr(args ...string) []string {
 func lastOfArr(arr []string) string {
 	return arr[len(arr)-1]
 }
+
+func filter[K interface{}](arr []K, f func(K) bool) (res []K) {
+	for _, v := range arr {
+		if f(v) {
+			res = append(res, v)
+		}
+	}
+	return res
+}

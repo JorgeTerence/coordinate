@@ -17,6 +17,8 @@ var (
 	dirTmpl  = loadTmpl("directory", INSTALL_PATH)
 	fileTmpl = loadTmpl("file", INSTALL_PATH)
 	errTmpl  = loadTmpl("error", INSTALL_PATH)
+
+	ignored = []string{"node_modules", "package-lock.json", "venv", "__pycache__"}
 )
 
 type (
@@ -65,7 +67,7 @@ func browse(w http.ResponseWriter, r *http.Request) {
 
 	if target.IsDir() {
 		dir, err := os.ReadDir(targetPath)
-		dirTmpl.Execute(w, DirData{pageData, dir})
+		dirTmpl.Execute(w, DirData{pageData, filter(dir, func(v fs.DirEntry) bool { return contains(ignored, v.Name()) })})
 
 		if err != nil {
 			log.Printf("\033[31mERROR:\033[0m %s", err)
