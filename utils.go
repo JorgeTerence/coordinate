@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"html/template"
 	"log"
 	"net"
@@ -53,24 +52,23 @@ func loadEnv() (pwd string, host string, addr string) {
 	return
 }
 
-func loadTmpl(tmplName string, path string) (tmpl *template.Template) {
-	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/web/%s.html", path, tmplName))
+func loadTmpl(tmplName string, source string) *template.Template {
+	tmpl, err := template.ParseFiles(path.Join(source, "web", tmplName+".html"))
 	if err != nil { log.Fatal(err) }
-
-	return
+	return tmpl
 }
 
 func loadBaseData(url string) BaseData {
-	return BaseData {
-		Host: host,
-		Addr: addr,
-		Path: url,
+	return BaseData{
+		Host:      host,
+		Addr:      addr,
+		Path:      url,
 		SplitPath: strings.Split(url, "/")[1:],
-		
-		PathJoin: path.Join,
+
+		PathJoin:    path.Join,
 		ArrContains: lo.Contains[string],
-		Arr: arr[string],
-		Last: lo.Last[string],
+		Arr:         arr[string],
+		Last:        lo.Last[string],
 	}
 }
 

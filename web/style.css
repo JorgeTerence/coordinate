@@ -110,7 +110,7 @@ pre {
 code {
   background-color: var(--background);
   font-family: var(--font-mono);
-  font-size: 1.2em;
+  font-size: var(--font-size-fluid-1);
 }
 
 img, video {

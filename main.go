@@ -20,7 +20,6 @@ var (
 
 // TODO: Add GIF support
 // TODO: Add favicon, logo and repo assets
-// TODO: Better font size on mobile
 func main() {
 	http.HandleFunc("/", browse)
 
