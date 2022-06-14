@@ -7,7 +7,6 @@
     <title>Coordinate</title>
   </head>
   <body>
-    <!-- Use ::after pseudo-element to show title on hover. Maybe generate a QR Code -->
     <h1>Coordinate on <a title="{{ .Base.Addr }}" href="/">{{ .Base.Host }}</a></h1>
     <ul class="path">
       {{ range .Base.SplitPath }}

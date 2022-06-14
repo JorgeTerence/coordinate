@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"github.com/samber/lo"
 	"io"
 	"io/fs"
 	"log"
@@ -31,7 +32,7 @@ type (
 		PathJoin    func(...string) string
 		ArrContains func([]string, string) bool
 		Arr         func(...string) []string
-		Last        func([]string) string
+		Last        func([]string) (string, error)
 	}
 
 	DirData struct {
@@ -67,7 +68,9 @@ func browse(w http.ResponseWriter, r *http.Request) {
 
 	if target.IsDir() {
 		dir, err := os.ReadDir(targetPath)
-		dirTmpl.Execute(w, DirData{pageData, filter(dir, func(v fs.DirEntry) bool { return contains(ignored, v.Name()) })})
+		filtered := lo.Filter(dir, func(f fs.DirEntry, _ int) bool { return !lo.Contains(ignored, f.Name()) })
+
+		dirTmpl.Execute(w, DirData{pageData, filtered})
 
 		if err != nil {
 			log.Printf("\033[31mERROR:\033[0m %s", err)

@@ -2,6 +2,12 @@ module github.com/JorgeTerence/coordinate
 
 go 1.18
 
-require github.com/mdp/qrterminal/v3 v3.0.0
+require (
+	github.com/mdp/qrterminal/v3 v3.0.0
+	github.com/samber/lo v1.21.0
+)
 
-require rsc.io/qr v0.2.0 // indirect
+require (
+	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
+	rsc.io/qr v0.2.0 // indirect
+)

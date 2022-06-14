@@ -9,6 +9,8 @@ import (
 	"os"
 	"path"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
 func getIPAddr() (string, error) {
@@ -66,9 +68,9 @@ func loadBaseData(url string) BaseData {
 		SplitPath: strings.Split(url, "/")[1:],
 		
 		PathJoin: path.Join,
-		ArrContains: contains,
-		Arr: createArr,
-		Last: lastOfArr,
+		ArrContains: lo.Contains[string],
+		Arr: arr[string],
+		Last: lo.Last[string],
 	}
 }
 
@@ -84,27 +86,6 @@ func resolveBaseDir() string {
 	return path.Join(pwd, os.Args[1])
 }
 
-func contains(arr []string, value string) bool {
-	for _, v := range arr {
-		if v == value { return true }
-	}
-
-	return false
-}
-
-func createArr(args ...string) []string {
+func arr[T any](args ...T) []T {
 	return args
-}
-
-func lastOfArr(arr []string) string {
-	return arr[len(arr)-1]
-}
-
-func filter[K interface{}](arr []K, f func(K) bool) (res []K) {
-	for _, v := range arr {
-		if f(v) {
-			res = append(res, v)
-		}
-	}
-	return res
 }
