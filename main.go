@@ -18,7 +18,7 @@ var (
 	baseDir         = resolveBaseDir()
 )
 
-// TODO: Add GIF support
+// TODO: config file for colors, filters, messages etc.
 // TODO: Add favicon, logo and repo assets
 func main() {
 	http.HandleFunc("/", browse)

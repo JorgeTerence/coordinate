@@ -22,7 +22,7 @@
       <span>Download</span>
     </a>
     
-    {{ if call .Base.ArrContains (call .Base.Arr ".png" ".jpg" ".jpeg" ".webp" ".svg") (.Ext) }}
+    {{ if call .Base.ArrContains (call .Base.Arr ".png" ".jpg" ".jpeg" ".webp" ".svg", ".gif") (.Ext) }}
       <img src="/download/{{ .Base.Path }}" alt="{{ .Name }}">
     {{ else if call .Base.ArrContains (call .Base.Arr ".mp4" ".mov" ".avi" ".wmf") (.Ext) }}
       <video controls src="/download/{{ .Base.Path }}"></video>
