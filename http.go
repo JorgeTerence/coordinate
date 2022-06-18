@@ -33,6 +33,7 @@ type (
 		ArrContains func([]string, string) bool
 		Arr         func(...string) []string
 		Last        func([]string) (string, error)
+		FileSize		func(int64) string
 	}
 
 	DirData struct {
@@ -45,6 +46,7 @@ type (
 		Content string
 		Name    string
 		Ext     string
+		Size    string
 	}
 
 	ErrorData struct {
@@ -68,22 +70,30 @@ func browse(w http.ResponseWriter, r *http.Request) {
 
 	if target.IsDir() {
 		dir, err := os.ReadDir(targetPath)
+
+		if err != nil {
+			log.Printf("\033[31mERROR:\033[0m %s", err)
+			errTmpl.Execute(w, ErrorData{pageData, err})
+			return
+		}
+
 		filtered := lo.Filter(dir, func(f fs.DirEntry, _ int) bool { return !lo.Contains(ignored, f.Name()) })
 
 		dirTmpl.Execute(w, DirData{pageData, filtered})
-
-		if err != nil {
-			log.Printf("\033[31mERROR:\033[0m %s", err)
-			errTmpl.Execute(w, ErrorData{pageData, err})
-		}
 	} else {
 		file, err := os.ReadFile(targetPath)
-		fileTmpl.Execute(w, FileData{pageData, string(file), path.Base(targetPath), path.Ext(targetPath)})
 
 		if err != nil {
 			log.Printf("\033[31mERROR:\033[0m %s", err)
 			errTmpl.Execute(w, ErrorData{pageData, err})
+			return
 		}
+
+		name := path.Base(targetPath)
+		extention := path.Ext(targetPath)
+		size := fileSize(target.Size())
+
+		fileTmpl.Execute(w, FileData{pageData, string(file), name, extention, size})
 	}
 }
 

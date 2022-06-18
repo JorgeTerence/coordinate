@@ -18,9 +18,7 @@ var (
 	baseDir         = resolveBaseDir()
 )
 
-// TODO: File details (permissions, size, date etc.)
 // TODO: config file for colors, filters, messages etc.
-// TODO: Add favicon, logo and repo assets
 // TODO: Add support for audio, pdf and binaries
 // TODO: Use zip archiving / compression as most people are comfortable with it
 func main() {

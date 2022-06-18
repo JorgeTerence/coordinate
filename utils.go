@@ -2,8 +2,10 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"html/template"
 	"log"
+	"math"
 	"net"
 	"os"
 	"path"
@@ -69,6 +71,7 @@ func loadBaseData(url string) BaseData {
 		ArrContains: lo.Contains[string],
 		Arr:         arr[string],
 		Last:        lo.Last[string],
+		FileSize: 	 fileSize,
 	}
 }
 
@@ -86,4 +89,17 @@ func resolveBaseDir() string {
 
 func arr[T any](args ...T) []T {
 	return args
+}
+
+func fileSize(n int64) string {
+	if n == 0 {
+		return "0B"
+	}
+
+	units := []string{"B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"}
+
+	// Getting log base 1000 of n
+	exp := math.Floor(math.Log(float64(n)) / math.Log(1000))
+
+	return fmt.Sprintf("%.1f%s", float64(n) / math.Pow(1000, exp), units[int(exp)])
 }

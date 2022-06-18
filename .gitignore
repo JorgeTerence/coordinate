@@ -5,5 +5,6 @@
 /assets/package/aur/src
 
 /assets/data
+/build/
 
 *.pkg.tar.zst

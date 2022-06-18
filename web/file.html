@@ -20,7 +20,7 @@
       download="{{ .Name }}"
     >
       <span class="material-symbols-outlined">file_download</span>
-      <span>Download</span>
+      <span>Download [{{.Size}}]</span>
     </a>
     
     {{ if call .Base.ArrContains (call .Base.Arr ".png" ".jpg" ".jpeg" ".webp" ".svg" ".gif") (.Ext) }}

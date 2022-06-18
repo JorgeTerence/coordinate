@@ -35,12 +35,15 @@
       Download
     </a>
     
-    <ul>
+    <ul class="entries">
       {{ range .Entries }}
         <li>
           <a href="{{ call $.Base.PathJoin ($.Base.Path) (.Name) }}">
             {{ .Name }}
           </a>
+          {{ if not .IsDir }}
+            <span class="file-size">{{ call $.Base.FileSize .Info.Size }}</span>
+          {{ end }}
         </li>
       {{ end }}
     </ul>
