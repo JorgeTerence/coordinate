@@ -1,12 +1,13 @@
 package main
 
 import (
-	"archive/tar"
+	"archive/zip"
+	"io"
 	"os"
 	"path"
 )
 
-func copyToTar(w *tar.Writer, source, nest string) error {
+func copyToZip(w *zip.Writer, source, nest string) error {
 	info, err := os.Stat(source)
 	if err != nil { return err }
 
@@ -15,7 +16,7 @@ func copyToTar(w *tar.Writer, source, nest string) error {
 		if err != nil { return err }
 
 		for _, entry := range dir {
-			if err := copyToTar(w, path.Join(source, entry.Name()), path.Join(nest, entry.Name())); err != nil {
+			if err := copyToZip(w, path.Join(source, entry.Name()), path.Join(nest, entry.Name())); err != nil {
 				return err
 			}
 		}
@@ -23,23 +24,13 @@ func copyToTar(w *tar.Writer, source, nest string) error {
 		return nil
 	}
 
-	f, err := os.Open(source)
+	file, err := os.Open(source)
 	if err != nil { return err }
-	defer f.Close()
+	defer file.Close()
 
-	content, err := os.ReadFile(source)
+	f, err := w.Create(nest)
 	if err != nil { return err }
 
-	header := &tar.Header{
-		Name: nest,
-		Mode: int64(info.Mode()),
-		Size: int64(len(string(content))),
-	}
-
-	if err := w.WriteHeader(header); err != nil {
-		return err
-	}
-
-	_, err = w.Write(content)
+	_, err = io.Copy(f, file)
 	return err
 }

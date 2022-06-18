@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"path"
 	"os"
+	"path"
+
 	qr "github.com/mdp/qrterminal/v3"
 )
 
@@ -20,7 +21,6 @@ var (
 
 // TODO: config file for colors, filters, messages etc.
 // TODO: Add support for audio, pdf and binaries
-// TODO: Use zip archiving / compression as most people are comfortable with it
 func main() {
 	http.HandleFunc("/", browse)
 
@@ -30,7 +30,7 @@ func main() {
 	downloadFiles := http.FileServer(http.Dir(baseDir))
 	http.Handle("/download/", http.StripPrefix("/download/", downloadFiles))
 
-	http.HandleFunc("/tar/", downloadTar)
+	http.HandleFunc("/zip/", downloadZip)
 
 	url := fmt.Sprintf("http://%s:%d", addr, PORT)
 

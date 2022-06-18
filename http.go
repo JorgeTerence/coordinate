@@ -1,17 +1,15 @@
 package main
 
 import (
-	"archive/tar"
-	"bytes"
-	"compress/gzip"
-	"github.com/samber/lo"
-	"io"
+	"archive/zip"
 	"io/fs"
 	"log"
 	"net/http"
 	"os"
 	"path"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
 var (
@@ -33,7 +31,7 @@ type (
 		ArrContains func([]string, string) bool
 		Arr         func(...string) []string
 		Last        func([]string) (string, error)
-		FileSize		func(int64) string
+		FileSize    func(int64) string
 	}
 
 	DirData struct {
@@ -97,34 +95,26 @@ func browse(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func downloadTar(w http.ResponseWriter, r *http.Request) {
-	target := strings.TrimPrefix(r.URL.Path, "/tar/")
+func downloadZip(w http.ResponseWriter, r *http.Request) {
+	target := strings.TrimPrefix(r.URL.Path, "/zip/")
 	targetPath := path.Join(baseDir, target)
 	pageData := loadBaseData(r.URL.Path)
 
-	log.Printf("\033[33mTAR:\033[0m %s", path.Clean(target))
+	log.Printf("\033[33mZIP:\033[0m %s", path.Clean(target))
 
-	w.Header().Set("Content-Type", "application/tar")
+	w.Header().Set("Content-Type", "application/zip")
 
-	var buf bytes.Buffer
-
-	// Archive directory's contents to tarball
-	tw := tar.NewWriter(&buf)
-	defer tw.Close()
-
-	if err := copyToTar(tw, targetPath, path.Base(targetPath)); err != nil {
+	zw := zip.NewWriter(w)
+	
+	if err := copyToZip(zw, targetPath, path.Base(targetPath)); err != nil {
 		log.Printf("\033[31mERROR:\033[0m %s", err)
 		errTmpl.Execute(w, ErrorData{pageData, err})
 		return
 	}
 
-	// Compress tarball using gzip
-	// FIXME: tar: Unexpected EOF in archive
-	zw := gzip.NewWriter(w)
-	defer zw.Close()
-
-	if _, err := io.Copy(zw, &buf); err != nil {
+	if err := zw.Close(); err != nil {
 		log.Printf("\033[31mERROR:\033[0m %s", err)
 		errTmpl.Execute(w, ErrorData{pageData, err})
+		return
 	}
 }

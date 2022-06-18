@@ -24,11 +24,11 @@
     <a
       {{/* If it's the root dir, use `coordinate.tar.gz` */}}
       {{ if eq (index .Base.SplitPath 0) ("") }}
-        class="download" href="/tar/." download="coordinate.tar.gz"
+        class="download" href="/zip/." download="coordinate.zip"
       {{ else }}
         class="download"
-        href="/{{ call $.Base.PathJoin ("tar") ($.Base.Path) }}"
-        download="{{ print (call .Base.Last (.Base.SplitPath)) (".tar.gz") }}"
+        href="/{{ call $.Base.PathJoin ("zip") ($.Base.Path) }}"
+        download="{{ print (call .Base.Last (.Base.SplitPath)) (".zip") }}"
       {{ end }}
     >
       <span class="material-symbols-outlined">file_download</span>
