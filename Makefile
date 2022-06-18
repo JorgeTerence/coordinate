@@ -11,8 +11,8 @@ install:
 	@mkdir -p $(ASSETS_DIR)
 	@mkdir -p $(ASSETS_DIR)/web
 	
-	@install -Dm755 build/$(TARGET) $(BIN_DIR)
-	@install -Dm644 web/* $(ASSETS_DIR)/web
+	@sudo install -Dm755 build/$(TARGET) $(BIN_DIR)
+	@sudo install -Dm644 web/* $(ASSETS_DIR)/web
 
 clean: # Clean `build` and `pkg` artifacts
 	@rm -rf build

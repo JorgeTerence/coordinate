@@ -4,4 +4,6 @@
 /assets/package/aur/pkg
 /assets/package/aur/src
 
+/assets/data
+
 *.pkg.tar.zst

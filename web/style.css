@@ -74,10 +74,6 @@ a {
   font-size: 1.1em;
 }
 
-a:visited {
-  color: var(--active-dimm);
-}
-
 a[download] {
   background-color: var(--active);
   color: var(--background);
@@ -117,6 +113,7 @@ img, video {
   display: block;
   margin-block: 1rem;
   border-radius: 0.45rem;
+  max-height: 64vh;
 }
 
 .error {
