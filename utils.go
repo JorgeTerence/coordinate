@@ -22,7 +22,9 @@ func getIPAddr() (string, error) {
 
 	for _, i := range ifaces {
 		addrs, err := i.Addrs()
-		if err != nil { log.Fatal(err) }
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		for _, addr := range addrs {
 			ip := addr.String()
@@ -43,20 +45,34 @@ func loadEnv() (pwd string, host string, addr string) {
 	var err error
 
 	pwd, err = os.Getwd()
-	if err != nil { log.Fatal(err) }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	host, err = os.Hostname()
-	if err != nil { log.Fatal(err) }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	addr, err = getIPAddr()
-	if err != nil { log.Fatal(err) }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	return
 }
 
-func loadTmpl(tmplName string, source string) *template.Template {
-	tmpl, err := template.ParseFiles(path.Join(source, "web", tmplName+".html"))
-	if err != nil { log.Fatal(err) }
+func loadTmpl(tmplName string) *template.Template {
+	file, err := assets.ReadFile(path.Join("web", fmt.Sprintf("%s.html", tmplName)))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tmpl, err := template.New(tmplName).Parse(string(file))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return tmpl
 }
 
@@ -71,7 +87,7 @@ func loadBaseData(url string) BaseData {
 		ArrContains: lo.Contains[string],
 		Arr:         arr[string],
 		Last:        lo.Last[string],
-		FileSize: 	 fileSize,
+		FileSize:    fileSize,
 	}
 }
 
@@ -101,5 +117,5 @@ func fileSize(n int64) string {
 	// Getting log base 1000 of n
 	exp := math.Floor(math.Log(float64(n)) / math.Log(1000))
 
-	return fmt.Sprintf("%.1f%s", float64(n) / math.Pow(1000, exp), units[int(exp)])
+	return fmt.Sprintf("%.1f%s", float64(n)/math.Pow(1000, exp), units[int(exp)])
 }

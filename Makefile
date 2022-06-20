@@ -1,18 +1,13 @@
 TARGET = coordinate
-BIN_DIR = /usr/bin/$(TARGET)
-ASSETS_DIR = /usr/share/$(TARGET)
+BIN = /usr/bin/$(TARGET)
 AUR_DIR = assets/package/aur
 
 build:
 	go mod tidy
 	go build -o build/$(TARGET)
 
-install:
-	@mkdir -p $(ASSETS_DIR)
-	@mkdir -p $(ASSETS_DIR)/web
-	
-	@sudo install -Dm755 build/$(TARGET) $(BIN_DIR)
-	@sudo install -Dm644 web/* $(ASSETS_DIR)/web
+install:	
+	@install -Dm755 build/$(TARGET) $(BIN)
 
 clean: # Clean `build` and `pkg` artifacts
 	@rm -rf build
@@ -26,8 +21,7 @@ clean: # Clean `build` and `pkg` artifacts
 	@echo "✔️"
 
 erase: # Remove current installation
-	@sudo rm -f $(BIN_DIR)
-	@sudo rm -rf $(ASSETS_DIR)
+	@sudo rm -f $(BIN)
 
 pkg: # Generate and install Arch Linux package
 	@echo "Erasing current installation 🧼 [make erase]"

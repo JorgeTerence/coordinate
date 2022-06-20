@@ -13,9 +13,9 @@ import (
 )
 
 var (
-	dirTmpl  = loadTmpl("directory", INSTALL_PATH)
-	fileTmpl = loadTmpl("file", INSTALL_PATH)
-	errTmpl  = loadTmpl("error", INSTALL_PATH)
+	dirTmpl  = loadTmpl("directory")
+	fileTmpl = loadTmpl("file")
+	errTmpl  = loadTmpl("error")
 
 	ignored = []string{"node_modules", "package-lock.json", "venv", "__pycache__"}
 )
@@ -54,7 +54,7 @@ type (
 )
 
 func browse(w http.ResponseWriter, r *http.Request) {
-	targetPath := path.Join(baseDir, r.URL.Path)
+	targetPath := path.Join(source, r.URL.Path)
 	target, err := os.Stat(targetPath)
 	pageData := loadBaseData(r.URL.Path)
 
@@ -97,7 +97,7 @@ func browse(w http.ResponseWriter, r *http.Request) {
 
 func downloadZip(w http.ResponseWriter, r *http.Request) {
 	target := strings.TrimPrefix(r.URL.Path, "/zip/")
-	targetPath := path.Join(baseDir, target)
+	targetPath := path.Join(source, target)
 	pageData := loadBaseData(r.URL.Path)
 
 	log.Printf("\033[33mZIP:\033[0m %s", path.Clean(target))
@@ -105,7 +105,7 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/zip")
 
 	zw := zip.NewWriter(w)
-	
+
 	if err := copyToZip(zw, targetPath, path.Base(targetPath)); err != nil {
 		log.Printf("\033[31mERROR:\033[0m %s", err)
 		errTmpl.Execute(w, ErrorData{pageData, err})
