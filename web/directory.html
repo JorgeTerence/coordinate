@@ -5,7 +5,7 @@
   {{ if .IsRoot }}
     <li>~</li>
   {{ else }}
-    {{ range .Base.SplitPath }}
+    {{ range .Base.Split }}
       <li>{{ . }}</li>
     {{ end }}
   {{ end }}
@@ -15,7 +15,7 @@
     class="download" href="/zip/." download="coordinate.zip"
   {{ else }}
     class="download"
-    href="/{{ call .Base.PathJoin "zip" .Base.Path }}"
+    href="/{{ call .Base.Join "zip" .Base.Path }}"
     download="{{ print .DirName ".zip" }}"
   {{ end }}
 >
@@ -26,11 +26,11 @@
 <ul class="entries">
   {{ range .Entries }}
     <li>
-      <a href="{{ call $.Base.PathJoin $.Base.Path .Name }}">
+      <a href="{{ call $.Base.Join $.Base.Path .Name }}">
         {{ .Name }}
       </a>
       {{ if not .IsDir }}
-        <span class="file-size">{{ call $.Base.FileSize .Info.Size }}</span>
+        <span class="file-size">{{ call $.Base.Size .Info.Size }}</span>
       {{ end }}
     </li>
   {{ end }}

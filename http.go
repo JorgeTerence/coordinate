@@ -18,26 +18,28 @@ var (
 	errTmpl  = loadTmpl("error")
 
 	ignored = []string{"node_modules", "package-lock.json", "venv", "__pycache__"}
+
+	contentTypes = map[string][]string{
+		"image": {".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif"},
+		"video": {".mp4", ".mov", ".avi", ".wmf"},
+	}
 )
 
 type (
 	BaseData struct {
-		Host      string
-		Addr      string
-		Path      string
-		SplitPath []string
+		Host  string
+		Addr  string
+		Path  string
+		Split []string
 
-		PathJoin    func(...string) string
-		ArrContains func([]string, string) bool
-		Arr         func(...string) []string
-		Last        func([]string) (string, error)
-		FileSize    func(int64) string
+		Join func(...string) string
+		Size func(int64) string
 	}
 
 	DirData struct {
-		Base      BaseData
-		Entries   []fs.DirEntry
-		IsRoot    bool
+		Base    BaseData
+		Entries []fs.DirEntry
+		IsRoot  bool
 		DirName string
 	}
 
@@ -45,7 +47,7 @@ type (
 		Base    BaseData
 		Content string
 		Name    string
-		Ext     string
+		Type    string
 		Size    string
 	}
 
@@ -78,7 +80,7 @@ func browse(w http.ResponseWriter, r *http.Request) {
 		filtered := lo.Filter(dir, func(f fs.DirEntry, _ int) bool { return !lo.Contains(ignored, f.Name()) })
 		isAbs := targetPath == "/"
 		dirName := path.Base(targetPath)
-		
+
 		if err := dirTmpl.ExecuteTemplate(w, "directory.html", DirData{pageData, filtered, isAbs, dirName}); err != nil {
 			log.Fatal(err)
 		}
@@ -91,10 +93,18 @@ func browse(w http.ResponseWriter, r *http.Request) {
 		}
 
 		name := path.Base(targetPath)
-		extention := path.Ext(targetPath)
 		size := fileSize(target.Size())
 
-		fileTmpl.ExecuteTemplate(w, "file.html", FileData{pageData, string(file), name, extention, size})
+		var fileType string
+
+		for ctype, ext := range contentTypes {
+			if lo.Contains(ext, path.Ext(targetPath))	{
+				fileType = ctype
+				break
+			}
+		}
+
+		fileTmpl.ExecuteTemplate(w, "file.html", FileData{pageData, string(file), name, fileType, size})
 	}
 }
 

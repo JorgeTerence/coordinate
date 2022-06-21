@@ -2,22 +2,23 @@
 {{ define "content" }}
   <h1>Coordinate on <a title="{{ .Base.Addr }}" href="/">{{ .Base.Host }}</a></h1>
   <ul class="path">
-    {{ range .Base.SplitPath }}
+    {{ range .Base.Split }}
       <li>{{ . }}</li>
     {{ end }}
   </ul>
 
   <a
-    href="{{ call .Base.PathJoin ("/download/") (.Base.Path) }}"
+    href="{{ call .Base.Join ("/download/") (.Base.Path) }}"
     download="{{ .Name }}"
   >
     <span class="material-symbols-outlined">file_download</span>
-    <span>Download [{{.Size}}]</span>
+    <span>Download [{{ .Size }}]</span>
   </a>
   
-  {{ if call .Base.ArrContains (call .Base.Arr ".png" ".jpg" ".jpeg" ".webp" ".svg" ".gif") (.Ext) }}
+  {{/* Recognize file extension  */}}
+  {{ if eq .Type "image" }}
     <img src="/download/{{ .Base.Path }}" alt="{{ .Name }}">
-  {{ else if call .Base.ArrContains (call .Base.Arr ".mp4" ".mov" ".avi" ".wmf") (.Ext) }}
+  {{ else if eq .Type "video" }}
     <video controls src="/download/{{ .Base.Path }}"></video>
   {{ else }}
     <pre><code>{{ .Content }}</code></pre>

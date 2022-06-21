@@ -11,8 +11,6 @@ import (
 	"os"
 	"path"
 	"strings"
-
-	"github.com/samber/lo"
 )
 
 func getIPAddr() (string, error) {
@@ -63,6 +61,7 @@ func loadEnv() (pwd string, host string, addr string) {
 	return
 }
 
+// TODO: maybe just use one template blob
 func loadTmpl(tmplName string) *template.Template {
 	tmpl, err := template.ParseFS(assets, "web/base.html", fmt.Sprintf("web/%s.html", tmplName))
 	if err != nil {
@@ -74,16 +73,13 @@ func loadTmpl(tmplName string) *template.Template {
 
 func loadBaseData(url string) BaseData {
 	return BaseData{
-		Host:      host,
-		Addr:      addr,
-		Path:      url,
-		SplitPath: strings.Split(url, "/")[1:],
+		Host:  host,
+		Addr:  addr,
+		Path:  url,
+		Split: strings.Split(url, "/")[1:],
 
-		PathJoin:    path.Join,
-		ArrContains: lo.Contains[string],
-		Arr:         arr[string],
-		Last:        lo.Last[string],
-		FileSize:    fileSize,
+		Join:     path.Join,
+		Size:     fileSize,
 	}
 }
 
@@ -97,10 +93,6 @@ func resolveBaseDir() string {
 	}
 
 	return path.Join(pwd, os.Args[1])
-}
-
-func arr[T any](args ...T) []T {
-	return args
 }
 
 func fileSize(n int64) string {
