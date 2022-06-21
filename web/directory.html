@@ -1,51 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="/static/web/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/static/web/style.css" />
-    <title>Coordinate</title>
-  </head>
-  <body>
-    <h1>Coordinate on <a title="{{ .Base.Addr }}" href="/">{{ .Base.Host }}</a></h1>
+{{ template "base" . }}
+{{ define "content" }}
+<h1>Coordinate on <a title="{{ .Base.Addr }}" href="/">{{ .Base.Host }}</a></h1>
+<ul class="path">
+  {{ if .IsRoot }}
+    <li>~</li>
+  {{ else }}
+    {{ range .Base.SplitPath }}
+      <li>{{ . }}</li>
+    {{ end }}
+  {{ end }}
+</ul>
+<a
+  {{ if .IsRoot }}
+    class="download" href="/zip/." download="coordinate.zip"
+  {{ else }}
+    class="download"
+    href="/{{ call .Base.PathJoin "zip" .Base.Path }}"
+    download="{{ print .DirName ".zip" }}"
+  {{ end }}
+>
+  <span class="material-symbols-outlined">file_download</span>
+  Download
+</a>
 
-    <ul class="path">
-      {{/* If it's the root dir, show "~" */}}
-      {{ if eq (index .Base.SplitPath 0) ("") }}
-        <li>~</li>
-      {{ else }}
-        {{ range .Base.SplitPath }}
-          <li>{{ . }}</li>
-        {{ end }}
+<ul class="entries">
+  {{ range .Entries }}
+    <li>
+      <a href="{{ call $.Base.PathJoin $.Base.Path .Name }}">
+        {{ .Name }}
+      </a>
+      {{ if not .IsDir }}
+        <span class="file-size">{{ call $.Base.FileSize .Info.Size }}</span>
       {{ end }}
-    </ul>
-
-    <a
-      {{/* If it's the root dir, use `coordinate.tar.gz` */}}
-      {{ if eq (index .Base.SplitPath 0) ("") }}
-        class="download" href="/zip/." download="coordinate.zip"
-      {{ else }}
-        class="download"
-        href="/{{ call $.Base.PathJoin ("zip") ($.Base.Path) }}"
-        download="{{ print (call .Base.Last (.Base.SplitPath)) (".zip") }}"
-      {{ end }}
-    >
-      <span class="material-symbols-outlined">file_download</span>
-      Download
-    </a>
-    
-    <ul class="entries">
-      {{ range .Entries }}
-        <li>
-          <a href="{{ call $.Base.PathJoin ($.Base.Path) (.Name) }}">
-            {{ .Name }}
-          </a>
-          {{ if not .IsDir }}
-            <span class="file-size">{{ call $.Base.FileSize .Info.Size }}</span>
-          {{ end }}
-        </li>
-      {{ end }}
-    </ul>
-  </body>
-</html>
+    </li>
+  {{ end }}
+</ul>
+{{ end }}

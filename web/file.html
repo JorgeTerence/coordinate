@@ -1,34 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/static/style.css" />
-    <title>Coordinate</title>
-  </head>
-  <body>
-    <h1>Coordinate on <a title="{{ .Base.Addr }}" href="/">{{ .Base.Host }}</a></h1>
-    <ul class="path">
-      {{ range .Base.SplitPath }}
-        <li>{{ . }}</li>
-      {{ end }}
-    </ul>
-
-    <a
-      href="{{ call .Base.PathJoin ("/download/") (.Base.Path) }}"
-      download="{{ .Name }}"
-    >
-      <span class="material-symbols-outlined">file_download</span>
-      <span>Download [{{.Size}}]</span>
-    </a>
-    
-    {{ if call .Base.ArrContains (call .Base.Arr ".png" ".jpg" ".jpeg" ".webp" ".svg" ".gif") (.Ext) }}
-      <img src="/download/{{ .Base.Path }}" alt="{{ .Name }}">
-    {{ else if call .Base.ArrContains (call .Base.Arr ".mp4" ".mov" ".avi" ".wmf") (.Ext) }}
-      <video controls src="/download/{{ .Base.Path }}"></video>
-    {{ else }}
-      <pre><code>{{ .Content }}</code></pre>
+{{ template "base" . }}
+{{ define "content" }}
+  <h1>Coordinate on <a title="{{ .Base.Addr }}" href="/">{{ .Base.Host }}</a></h1>
+  <ul class="path">
+    {{ range .Base.SplitPath }}
+      <li>{{ . }}</li>
     {{ end }}
-  </body>
-</html>
+  </ul>
+
+  <a
+    href="{{ call .Base.PathJoin ("/download/") (.Base.Path) }}"
+    download="{{ .Name }}"
+  >
+    <span class="material-symbols-outlined">file_download</span>
+    <span>Download [{{.Size}}]</span>
+  </a>
+  
+  {{ if call .Base.ArrContains (call .Base.Arr ".png" ".jpg" ".jpeg" ".webp" ".svg" ".gif") (.Ext) }}
+    <img src="/download/{{ .Base.Path }}" alt="{{ .Name }}">
+  {{ else if call .Base.ArrContains (call .Base.Arr ".mp4" ".mov" ".avi" ".wmf") (.Ext) }}
+    <video controls src="/download/{{ .Base.Path }}"></video>
+  {{ else }}
+    <pre><code>{{ .Content }}</code></pre>
+  {{ end }}
+{{ end }}

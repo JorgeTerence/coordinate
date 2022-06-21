@@ -20,11 +20,7 @@ var (
 
 // TODO: config file for colors, filters, messages etc.
 // TODO: Add support for audio, pdf and binaries
-func main() {
-	dir, _ := assets.ReadDir(".")
-	for _, file := range dir {
-		fmt.Println(file.Name())
-	}
+func main() {	
 	http.HandleFunc("/", browse)
 
 	programFiles := http.FileServer(http.FS(assets))

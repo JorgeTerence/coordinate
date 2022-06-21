@@ -7,6 +7,7 @@ import (
 	"log"
 	"math"
 	"net"
+	"net/http"
 	"os"
 	"path"
 	"strings"
@@ -63,12 +64,7 @@ func loadEnv() (pwd string, host string, addr string) {
 }
 
 func loadTmpl(tmplName string) *template.Template {
-	file, err := assets.ReadFile(path.Join("web", fmt.Sprintf("%s.html", tmplName)))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	tmpl, err := template.New(tmplName).Parse(string(file))
+	tmpl, err := template.ParseFS(assets, "web/base.html", fmt.Sprintf("web/%s.html", tmplName))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -118,4 +114,9 @@ func fileSize(n int64) string {
 	exp := math.Floor(math.Log(float64(n)) / math.Log(1000))
 
 	return fmt.Sprintf("%.1f%s", float64(n)/math.Pow(1000, exp), units[int(exp)])
+}
+
+func report(w http.ResponseWriter, err error) {
+	errTmpl.ExecuteTemplate(w, "error.html", ErrorData{loadBaseData(""), err})
+	log.Printf("\033[31mERROR:\033[0m %s", err)
 }

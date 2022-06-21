@@ -35,8 +35,10 @@ type (
 	}
 
 	DirData struct {
-		Base    BaseData
-		Entries []fs.DirEntry
+		Base      BaseData
+		Entries   []fs.DirEntry
+		IsRoot    bool
+		DirName string
 	}
 
 	FileData struct {
@@ -61,8 +63,7 @@ func browse(w http.ResponseWriter, r *http.Request) {
 	log.Printf("\033[32mGET:\033[0m %s", path.Clean(r.URL.Path))
 
 	if err != nil {
-		errTmpl.Execute(w, ErrorData{pageData, err})
-		log.Printf("\033[31mERROR:\033[0m %s", err)
+		report(w, err)
 		return
 	}
 
@@ -70,20 +71,22 @@ func browse(w http.ResponseWriter, r *http.Request) {
 		dir, err := os.ReadDir(targetPath)
 
 		if err != nil {
-			log.Printf("\033[31mERROR:\033[0m %s", err)
-			errTmpl.Execute(w, ErrorData{pageData, err})
+			report(w, err)
 			return
 		}
 
 		filtered := lo.Filter(dir, func(f fs.DirEntry, _ int) bool { return !lo.Contains(ignored, f.Name()) })
-
-		dirTmpl.Execute(w, DirData{pageData, filtered})
+		isAbs := targetPath == "/"
+		dirName := path.Base(targetPath)
+		
+		if err := dirTmpl.ExecuteTemplate(w, "directory.html", DirData{pageData, filtered, isAbs, dirName}); err != nil {
+			log.Fatal(err)
+		}
 	} else {
 		file, err := os.ReadFile(targetPath)
 
 		if err != nil {
-			log.Printf("\033[31mERROR:\033[0m %s", err)
-			errTmpl.Execute(w, ErrorData{pageData, err})
+			report(w, err)
 			return
 		}
 
@@ -91,30 +94,23 @@ func browse(w http.ResponseWriter, r *http.Request) {
 		extention := path.Ext(targetPath)
 		size := fileSize(target.Size())
 
-		fileTmpl.Execute(w, FileData{pageData, string(file), name, extention, size})
+		fileTmpl.ExecuteTemplate(w, "file.html", FileData{pageData, string(file), name, extention, size})
 	}
 }
 
 func downloadZip(w http.ResponseWriter, r *http.Request) {
 	target := strings.TrimPrefix(r.URL.Path, "/zip/")
 	targetPath := path.Join(source, target)
-	pageData := loadBaseData(r.URL.Path)
 
 	log.Printf("\033[33mZIP:\033[0m %s", path.Clean(target))
 
 	w.Header().Set("Content-Type", "application/zip")
 
 	zw := zip.NewWriter(w)
+	defer zw.Close()
 
 	if err := copyToZip(zw, targetPath, path.Base(targetPath)); err != nil {
-		log.Printf("\033[31mERROR:\033[0m %s", err)
-		errTmpl.Execute(w, ErrorData{pageData, err})
-		return
-	}
-
-	if err := zw.Close(); err != nil {
-		log.Printf("\033[31mERROR:\033[0m %s", err)
-		errTmpl.Execute(w, ErrorData{pageData, err})
+		report(w, err)
 		return
 	}
 }
