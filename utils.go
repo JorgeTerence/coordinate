@@ -61,7 +61,6 @@ func loadEnv() (pwd string, host string, addr string) {
 	return
 }
 
-// TODO: maybe just use one template blob
 func loadTmpl(tmplName string) *template.Template {
 	tmpl, err := template.ParseFS(assets, "web/base.html", fmt.Sprintf("web/%s.html", tmplName))
 	if err != nil {
@@ -78,8 +77,8 @@ func loadBaseData(url string) BaseData {
 		Path:  url,
 		Split: strings.Split(url, "/")[1:],
 
-		Join:     path.Join,
-		Size:     fileSize,
+		Join: path.Join,
+		Size: fileSize,
 	}
 }
 
@@ -108,7 +107,14 @@ func fileSize(n int64) string {
 	return fmt.Sprintf("%.1f%s", float64(n)/math.Pow(1000, exp), units[int(exp)])
 }
 
-func report(w http.ResponseWriter, err error) {
-	errTmpl.ExecuteTemplate(w, "error.html", ErrorData{loadBaseData(""), err})
-	log.Printf("\033[31mERROR:\033[0m %s", err)
+func record(w http.ResponseWriter, level, msg string) {
+	switch strings.ToUpper(level) {
+	case "GET":
+		log.Printf("\033[32mGET:\033[0m %s", msg)
+	case "ERROR":
+		errTmpl.ExecuteTemplate(w, "error.html", ErrorData{loadBaseData(""), msg})
+		log.Printf("\033[31mERROR:\033[0m %s", msg)
+	case "ZIP":
+		log.Printf("\033[33mZIP:\033[0m %s", msg)
+	}
 }

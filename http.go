@@ -3,7 +3,6 @@ package main
 import (
 	"archive/zip"
 	"io/fs"
-	"log"
 	"net/http"
 	"os"
 	"path"
@@ -53,7 +52,7 @@ type (
 
 	ErrorData struct {
 		Base BaseData
-		Err  error
+		Err  string
 	}
 )
 
@@ -61,11 +60,11 @@ func browse(w http.ResponseWriter, r *http.Request) {
 	targetPath := path.Join(source, r.URL.Path)
 	target, err := os.Stat(targetPath)
 	pageData := loadBaseData(r.URL.Path)
-
-	log.Printf("\033[32mGET:\033[0m %s", path.Clean(r.URL.Path))
+	
+	record(w, "GET", path.Clean(r.URL.Path))
 
 	if err != nil {
-		report(w, err)
+		record(w, "ERROR", err.Error())
 		return
 	}
 
@@ -73,7 +72,7 @@ func browse(w http.ResponseWriter, r *http.Request) {
 		dir, err := os.ReadDir(targetPath)
 
 		if err != nil {
-			report(w, err)
+			record(w, "ERROR", err.Error())
 			return
 		}
 
@@ -81,14 +80,12 @@ func browse(w http.ResponseWriter, r *http.Request) {
 		isAbs := targetPath == "/"
 		dirName := path.Base(targetPath)
 
-		if err := dirTmpl.ExecuteTemplate(w, "directory.html", DirData{pageData, filtered, isAbs, dirName}); err != nil {
-			log.Fatal(err)
-		}
+		dirTmpl.ExecuteTemplate(w, "directory.html", DirData{pageData, filtered, isAbs, dirName})
 	} else {
 		file, err := os.ReadFile(targetPath)
 
 		if err != nil {
-			report(w, err)
+			record(w, "ERROR", err.Error())
 			return
 		}
 
@@ -98,7 +95,7 @@ func browse(w http.ResponseWriter, r *http.Request) {
 		var fileType string
 
 		for ctype, ext := range contentTypes {
-			if lo.Contains(ext, path.Ext(targetPath))	{
+			if lo.Contains(ext, path.Ext(targetPath)) {
 				fileType = ctype
 				break
 			}
@@ -112,7 +109,7 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 	target := strings.TrimPrefix(r.URL.Path, "/zip/")
 	targetPath := path.Join(source, target)
 
-	log.Printf("\033[33mZIP:\033[0m %s", path.Clean(target))
+	record(w, "ZIP", path.Clean(r.URL.Path))
 
 	w.Header().Set("Content-Type", "application/zip")
 
@@ -120,7 +117,6 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 	defer zw.Close()
 
 	if err := copyToZip(zw, targetPath, path.Base(targetPath)); err != nil {
-		report(w, err)
-		return
+		record(w, "ERROR", err.Error())
 	}
 }
