@@ -18,9 +18,12 @@ var (
 	source          = resolveBaseDir()
 )
 
-// TODO: config file for colors, filters, messages etc.
 // TODO: Add support for audio, pdf and binaries
 func main() {	
+	config := loadConfig()
+
+	fmt.Println(config.Title)
+
 	http.HandleFunc("/", browse)
 
 	programFiles := http.FileServer(http.FS(assets))

@@ -7,7 +7,6 @@ import (
 	"log"
 	"math"
 	"net"
-	"net/http"
 	"os"
 	"path"
 	"strings"
@@ -107,13 +106,14 @@ func fileSize(n int64) string {
 	return fmt.Sprintf("%.1f%s", float64(n)/math.Pow(1000, exp), units[int(exp)])
 }
 
-func record(w http.ResponseWriter, level, msg string) {
+func record(level, msg string) {
 	switch strings.ToUpper(level) {
 	case "GET":
 		log.Printf("\033[32mGET:\033[0m %s", msg)
 	case "ERROR":
-		errTmpl.ExecuteTemplate(w, "error.html", ErrorData{loadBaseData(""), msg})
 		log.Printf("\033[31mERROR:\033[0m %s", msg)
+	case "WARN":
+		log.Printf("\033[33mWARNING:\033[0m %s", msg)
 	case "ZIP":
 		log.Printf("\033[33mZIP:\033[0m %s", msg)
 	}

@@ -52,7 +52,7 @@ type (
 
 	ErrorData struct {
 		Base BaseData
-		Err  string
+		Err  error
 	}
 )
 
@@ -61,10 +61,11 @@ func browse(w http.ResponseWriter, r *http.Request) {
 	target, err := os.Stat(targetPath)
 	pageData := loadBaseData(r.URL.Path)
 	
-	record(w, "GET", path.Clean(r.URL.Path))
+	record("GET", path.Clean(r.URL.Path))
 
 	if err != nil {
-		record(w, "ERROR", err.Error())
+		record("ERROR", err.Error())
+		errTmpl.ExecuteTemplate(w, "error.html", ErrorData{pageData, err})
 		return
 	}
 
@@ -72,7 +73,8 @@ func browse(w http.ResponseWriter, r *http.Request) {
 		dir, err := os.ReadDir(targetPath)
 
 		if err != nil {
-			record(w, "ERROR", err.Error())
+			record("ERROR", err.Error())
+			errTmpl.ExecuteTemplate(w, "error.html", ErrorData{pageData, err})
 			return
 		}
 
@@ -85,7 +87,8 @@ func browse(w http.ResponseWriter, r *http.Request) {
 		file, err := os.ReadFile(targetPath)
 
 		if err != nil {
-			record(w, "ERROR", err.Error())
+			record("ERROR", err.Error())
+			errTmpl.ExecuteTemplate(w, "error.html", ErrorData{pageData, err})
 			return
 		}
 
@@ -109,7 +112,7 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 	target := strings.TrimPrefix(r.URL.Path, "/zip/")
 	targetPath := path.Join(source, target)
 
-	record(w, "ZIP", path.Clean(r.URL.Path))
+	record("ZIP", path.Clean(r.URL.Path))
 
 	w.Header().Set("Content-Type", "application/zip")
 
@@ -117,6 +120,7 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 	defer zw.Close()
 
 	if err := copyToZip(zw, targetPath, path.Base(targetPath)); err != nil {
-		record(w, "ERROR", err.Error())
+		record("ERROR", err.Error())
+		errTmpl.ExecuteTemplate(w, "error.html", ErrorData{loadBaseData(""), err})
 	}
 }
