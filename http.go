@@ -16,7 +16,7 @@ var (
 	fileTmpl = loadTmpl("file")
 	errTmpl  = loadTmpl("error")
 
-	ignored = []string{"node_modules", "package-lock.json", "venv", "__pycache__"}
+	ignored = append([]string{"node_modules", "package-lock.json", "venv", "__pycache__"}, config.Filters...)
 
 	contentTypes = map[string][]string{
 		"image": {".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif"},
@@ -26,10 +26,11 @@ var (
 
 type (
 	BaseData struct {
-		Host  string
-		Addr  string
-		Path  string
-		Split []string
+		Host   string
+		Addr   string
+		Path   string
+		Split  []string
+		Config *Config
 
 		Join func(...string) string
 		Size func(int64) string
@@ -60,7 +61,7 @@ func browse(w http.ResponseWriter, r *http.Request) {
 	targetPath := path.Join(source, r.URL.Path)
 	target, err := os.Stat(targetPath)
 	pageData := loadBaseData(r.URL.Path)
-	
+
 	record("GET", path.Clean(r.URL.Path))
 
 	if err != nil {

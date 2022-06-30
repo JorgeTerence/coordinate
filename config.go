@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 	"path"
 
@@ -10,43 +9,27 @@ import (
 
 type Config struct {
 	Color   string
-	Active  string
+	Alt     string
 	Title   string
-	Error   string
 	Filters []string
 	Upload  bool
 	QrCode  bool
 }
 
-var configPaths = []string{
-	".config/coordinate/coordinate.yaml", // prefered
-	".config/coordinate/coordinate.yml",
-	"coordinate.yaml",
-	"coordinate.yml",
-	"./coordinate.yaml",
-	"./coordinate.yml",
-}
-
-func loadConfig() Config {
+func loadConfig() (config *Config) {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		log.Fatal(err)
+		record("WARN", err.Error())
 	}
 
-	config := Config{}
-
-	for _, target := range configPaths {
-		f, err := os.ReadFile(path.Join(home, target))
-		if err != nil {
-			continue
-		}
-
-		if err := yaml.Unmarshal(f, &config); err != nil {
-			record("WARN", err.Error())
-		}
-
-		break
+	f, err := os.ReadFile(path.Join(home, ".config/coordinate/coordinate.yaml"))
+	if err != nil {
+		record("WARN", err.Error())
 	}
 
-	return config
+	if err := yaml.Unmarshal(f, &config); err != nil {
+		record("WARN", err.Error())
+	}
+
+	return
 }

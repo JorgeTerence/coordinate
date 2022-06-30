@@ -1,38 +1,37 @@
 {{ template "base" . }}
 {{ define "content" }}
-<h1>Coordinate on <a title="{{ .Base.Addr }}" href="/">{{ .Base.Host }}</a></h1>
-<ul class="path">
-  {{ if .IsRoot }}
-    <li>~</li>
-  {{ else }}
-    {{ range .Base.Split }}
-      <li>{{ . }}</li>
-    {{ end }}
-  {{ end }}
-</ul>
-<a
-  {{ if .IsRoot }}
-    class="download" href="/zip/." download="coordinate.zip"
-  {{ else }}
-    class="download"
-    href="/{{ call .Base.Join "zip" .Base.Path }}"
-    download="{{ print .DirName ".zip" }}"
-  {{ end }}
->
-  <span class="material-symbols-outlined">file_download</span>
-  Download
-</a>
-
-<ul class="entries">
-  {{ range .Entries }}
-    <li>
-      <a href="{{ call $.Base.Join $.Base.Path .Name }}">
-        {{ .Name }}
-      </a>
-      {{ if not .IsDir }}
-        <span class="file-size">{{ call $.Base.Size .Info.Size }}</span>
+  <ul class="path">
+    {{ if .IsRoot }}
+      <li>~</li>
+    {{ else }}
+      {{ range .Base.Split }}
+        <li>{{ . }}</li>
       {{ end }}
-    </li>
-  {{ end }}
-</ul>
+    {{ end }}
+  </ul>
+  <a
+    {{ if .IsRoot }}
+      class="download" href="/zip/." download="coordinate.zip"
+    {{ else }}
+      class="download"
+      href="/{{ call .Base.Join "zip" .Base.Path }}"
+      download="{{ print .DirName ".zip" }}"
+    {{ end }}
+  >
+    <span class="material-symbols-outlined">file_download</span>
+    Download
+  </a>
+  
+  <ul class="entries">
+    {{ range .Entries }}
+      <li>
+        <a href="{{ call $.Base.Join $.Base.Path .Name }}">
+          {{ .Name }}
+        </a>
+        {{ if not .IsDir }}
+          <span class="file-size">{{ call $.Base.Size .Info.Size }}</span>
+        {{ end }}
+      </li>
+    {{ end }}
+  </ul>
 {{ end }}

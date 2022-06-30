@@ -1,6 +1,5 @@
 {{ template "base" . }}
 {{ define "content" }}
-  <h1>Coordinate on <a title="{{ .Base.Addr }}" href="/">{{ .Base.Host }}</a></h1>
   <div class="error">{{ .Err }}</div>
   <a href="javascript:history.back()">Go back</a>
 {{ end }}

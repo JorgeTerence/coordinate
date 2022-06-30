@@ -6,9 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="/static/web/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/static/web/style.css" />
+    <script defer src="/static/web/colors.js"></script>
     <title>Coordinate</title>
   </head>
-  <body>
+  <body
+    data-color-primary="{{ .Base.Config.Color }}"
+    data-color-alt="{{ .Base.Config.Alt }}"
+  >
+    <h1>
+      {{ if ne (len .Base.Config.Title) (0) }}
+        {{ .Base.Config.Title }}
+      {{ else }}
+        Coordinate on <a title="{{ .Base.Addr }}" href="/">{{ .Base.Host }}</a>
+      {{ end }}
+    </h1>
     {{ template "content" . }}
   </body>
 </html>

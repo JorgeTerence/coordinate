@@ -75,6 +75,7 @@ func loadBaseData(url string) BaseData {
 		Addr:  addr,
 		Path:  url,
 		Split: strings.Split(url, "/")[1:],
+		Config: config,
 
 		Join: path.Join,
 		Size: fileSize,
