@@ -80,10 +80,10 @@ func browse(w http.ResponseWriter, r *http.Request) {
 		}
 
 		filtered := lo.Filter(dir, func(f fs.DirEntry, _ int) bool { return !lo.Contains(ignored, f.Name()) })
-		isAbs := targetPath == "/"
+		isRoot := targetPath == source
 		dirName := path.Base(targetPath)
 
-		dirTmpl.ExecuteTemplate(w, "directory.html", DirData{pageData, filtered, isAbs, dirName})
+		dirTmpl.ExecuteTemplate(w, "directory.html", DirData{pageData, filtered, isRoot, dirName})
 	} else {
 		file, err := os.ReadFile(targetPath)
 
