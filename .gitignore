@@ -7,7 +7,4 @@
 /assets/data
 /build/
 
-coordinate.yaml
-coordinate.yml
-
 *.pkg.tar.zst

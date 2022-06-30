@@ -8,12 +8,12 @@ import (
 )
 
 type Config struct {
+	Title   string
 	Color   string
 	Alt     string
-	Title   string
-	Filters []string
 	Upload  bool
 	QrCode  bool
+	Filters []string
 }
 
 func loadConfig() (config *Config) {

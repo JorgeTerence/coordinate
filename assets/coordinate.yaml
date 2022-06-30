@@ -1,0 +1,11 @@
+title: Professor Kate's Math Class
+color: violet # https://open-props.style/#colors
+alt: grape
+upload: true
+qrcode: false
+filters:
+  - .gitignore
+  - node_modules
+  - package-lock.json
+  - __pycache__
+  - venv

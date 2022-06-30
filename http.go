@@ -16,8 +16,6 @@ var (
 	fileTmpl = loadTmpl("file")
 	errTmpl  = loadTmpl("error")
 
-	ignored = append([]string{"node_modules", "package-lock.json", "venv", "__pycache__"}, config.Filters...)
-
 	contentTypes = map[string][]string{
 		"image": {".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif"},
 		"video": {".mp4", ".mov", ".avi", ".wmf"},
@@ -78,8 +76,9 @@ func browse(w http.ResponseWriter, r *http.Request) {
 			errTmpl.ExecuteTemplate(w, "error.html", ErrorData{pageData, err})
 			return
 		}
-
-		filtered := lo.Filter(dir, func(f fs.DirEntry, _ int) bool { return !lo.Contains(ignored, f.Name()) })
+		
+		// TODO: Wildcard support
+		filtered := lo.Filter(dir, func(f fs.DirEntry, _ int) bool { return !lo.Contains(config.Filters, f.Name()) })
 		isRoot := targetPath == source
 		dirName := path.Base(targetPath)
 

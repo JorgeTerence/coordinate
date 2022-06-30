@@ -8,6 +8,8 @@ build:
 
 install:	
 	@install -Dm755 build/$(TARGET) $(BIN)
+	@mkdir -p ~/.config/coordinate
+	@mv assets/$(TARGET).yaml ~/.config/coordinate
 
 clean: # Clean `build` and `pkg` artifacts
 	@rm -rf build
