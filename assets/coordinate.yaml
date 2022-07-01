@@ -1,13 +1,19 @@
 # A custom header text
 title: ""
 
-color: violet # https://open-props.style/#colors
-alt: grape
+# Details at https://open-props.style/#colors
+color: red
+alt: pink
+
+# Allow nodes to upload files and zip archives to coordinate
 upload: true
+
+# Display QRCode on the terminal
 qrcode: false
+
+# Files and directories to filter (visual only!)
 filters:
   - .gitignore
   - node_modules
   - package-lock.json
-  - __pycache__
-  - venv
+  - build

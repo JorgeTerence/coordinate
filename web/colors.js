@@ -7,9 +7,9 @@ const getProp = (prop) => getComputedStyle(root).getPropertyValue(prop);
 const setProp = (prop, v) => root.style.setProperty(prop, v);
 
 document.addEventListener("DOMContentLoaded", () => {
-  const clrPrimary = getProp(root, `--${primary}-6`);
-  const clrPrimaryDimm = getProp(root, `--${primary}-9`);
-  const clrAlt = getProp(root, `--${alt}-5`);
+  const clrPrimary = getProp(`--${primary}-6`);
+  const clrPrimaryDimm = getProp(`--${primary}-9`);
+  const clrAlt = getProp(`--${alt}-5`);
   
   if (primary) {
     setProp("--active", clrPrimary);
@@ -17,6 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (alt !== undefined) {
-    setProp(root, "--alt", clrAlt);
+    setProp("--alt", clrAlt);
   }
 });

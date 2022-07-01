@@ -24,7 +24,7 @@ func loadConfig() (config *Config) {
 
 	f, err := os.ReadFile(path.Join(home, ".config/coordinate/coordinate.yaml"))
 	if err != nil {
-		record("WARN", err.Error())
+		return
 	}
 
 	if err := yaml.Unmarshal(f, &config); err != nil {
