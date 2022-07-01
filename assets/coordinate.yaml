@@ -1,4 +1,6 @@
-title: Professor Kate's Math Class
+# A custom header text
+title: ""
+
 color: violet # https://open-props.style/#colors
 alt: grape
 upload: true
