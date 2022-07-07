@@ -17,13 +17,17 @@ type Config struct {
 }
 
 func loadConfig() (config *Config) {
+	config = &Config{"", "", "", true, true, []string{}}
+
 	home, err := os.UserHomeDir()
 	if err != nil {
 		record("WARN", err.Error())
+		return
 	}
 
 	f, err := os.ReadFile(path.Join(home, ".config/coordinate/coordinate.yaml"))
 	if err != nil {
+		record("WARN", err.Error())
 		return
 	}
 

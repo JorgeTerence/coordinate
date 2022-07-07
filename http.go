@@ -77,7 +77,6 @@ func browse(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		
-		// TODO: Wildcard support
 		filtered := lo.Filter(dir, func(f fs.DirEntry, _ int) bool { return !lo.Contains(config.Filters, f.Name()) })
 		isRoot := targetPath == source
 		dirName := path.Base(targetPath)
@@ -97,9 +96,9 @@ func browse(w http.ResponseWriter, r *http.Request) {
 
 		var fileType string
 
-		for ctype, ext := range contentTypes {
+		for contentType, ext := range contentTypes {
 			if lo.Contains(ext, path.Ext(targetPath)) {
-				fileType = ctype
+				fileType = contentType
 				break
 			}
 		}
