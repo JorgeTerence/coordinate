@@ -8,10 +8,6 @@ A simple and friendly file sharing utility
 
 Coordinate is a terminal based file sharing utility. Have you ever just wanted to share a PDF or picture to your peers, to your phone or another computer but had to use a USB stick or send it via a messaging app? (Apple users yeah ik you exist and your life is wonderful) With this tool, you can launch a web page - a coordinate - with the files from your working directory so that others can access it via the local network.
 
-## Demo
-
-
-
 ## Installation and usage
 
 ```sh
