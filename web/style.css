@@ -113,7 +113,7 @@ pre {
 code {
   background-color: var(--background);
   font-family: var(--font-mono);
-  font-size: var(--font-size-fluid-1);
+  font-size: 1.2em;
 }
 
 img,

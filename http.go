@@ -19,6 +19,7 @@ var (
 	contentTypes = map[string][]string{
 		"image": {".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif"},
 		"video": {".mp4", ".mov", ".avi", ".wmf"},
+		"audio": {".mp3", ".wav", ".ogg", ".aiff", ".opus"},
 	}
 )
 
@@ -28,7 +29,6 @@ type (
 		Addr   string
 		Path   string
 		Split  []string
-		Config *Config
 
 		Join func(...string) string
 		Size func(int64) string
@@ -77,11 +77,10 @@ func browse(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		
-		filtered := lo.Filter(dir, func(f fs.DirEntry, _ int) bool { return !lo.Contains(config.Filters, f.Name()) })
 		isRoot := targetPath == source
 		dirName := path.Base(targetPath)
 
-		dirTmpl.ExecuteTemplate(w, "directory.html", DirData{pageData, filtered, isRoot, dirName})
+		dirTmpl.ExecuteTemplate(w, "directory.html", DirData{pageData, dir, isRoot, dirName})
 	} else {
 		file, err := os.ReadFile(targetPath)
 

@@ -13,12 +13,12 @@ import (
 )
 
 func getIPAddr() (string, error) {
-	ifaces, err := net.Interfaces()
+	interfaces, err := net.Interfaces()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for _, i := range ifaces {
+	for _, i := range interfaces {
 		addrs, err := i.Addrs()
 		if err != nil {
 			log.Fatal(err)
@@ -75,14 +75,13 @@ func loadBaseData(url string) BaseData {
 		Addr:  addr,
 		Path:  url,
 		Split: strings.Split(url, "/")[1:],
-		Config: config,
 
 		Join: path.Join,
 		Size: fileSize,
 	}
 }
 
-func resolveBaseDir() string {
+func resolveBase() string {
 	if len(os.Args) <= 1 || os.Args[1] == "." {
 		return pwd
 	}

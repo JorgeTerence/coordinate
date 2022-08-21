@@ -15,12 +15,14 @@ var (
 	//go:embed web
 	assets          embed.FS
 	pwd, host, addr = loadEnv()
-	config          = loadConfig()
-	source          = resolveBaseDir()
+	source          = resolveBase()
 )
 
-// TODO: Support for audio, pdf and binaries
-// TODO: Upload functionality
+/*
+TODO:
+- Support for audio, pdf and binaries
+- Use random string for URIs to avoid conflicts
+*/
 func main() {
 	http.HandleFunc("/", browse)
 
@@ -37,9 +39,9 @@ func main() {
 	fmt.Printf("Serving from %s on %s\n", host, url)
 	fmt.Printf("Base directory: %s\n\n", source)
 
-	if config.QrCode {
-		qr.GenerateHalfBlock(url, qr.L, os.Stdout)
-	}
+	qr.GenerateHalfBlock(url, qr.L, os.Stdout)
+	
+	go http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
 
-	http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
+	fmt.Scan()
 }

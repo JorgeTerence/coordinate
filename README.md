@@ -32,7 +32,6 @@ See more at [SAMPLES.md](assets/SAMPLES.md)
 
 ## TODO
 
-- [ ] Upload functionality
 - [ ] Preview to formats like PDF, docx, xlsx
 - [ ] Handle executables, encoded files and protected directories
 - [ ] Packaging for various systems

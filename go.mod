@@ -5,7 +5,6 @@ go 1.18
 require (
 	github.com/mdp/qrterminal/v3 v3.0.0
 	github.com/samber/lo v1.21.0
-	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
