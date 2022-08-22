@@ -32,7 +32,11 @@ See more at [SAMPLES.md](assets/SAMPLES.md)
 
 ## TODO
 
-- [ ] Preview to formats like PDF, docx, xlsx
-- [ ] Handle executables, encoded files and protected directories
-- [ ] Packaging for various systems
+- [ ] Support for PDFs, audio, binaries and Office files - odt, xls, docx etc
+- [ ] Handle executable encoded or protected files
+- [ ] Packaging for various platforms
+- [ ] Single file sharing
+- [ ] Use random strings for internal URIs
 - [ ] Context menu action for Windows' File Explorer
+
+I swear I'll rewrite all this in Rust one day...

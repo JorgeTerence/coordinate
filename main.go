@@ -30,14 +30,6 @@ var (
 	source          = resolveBase()
 )
 
-/*
-TODO:
-- Support for audio, pdf and binaries
-- Use random string for URIs to avoid conflicts
-- Simplify loading templates
-- Add a way to share a single file
-*/
-
 func main() {
 	http.HandleFunc("/", browse)
 
