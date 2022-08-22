@@ -12,10 +12,6 @@ import (
 )
 
 var (
-	dirTmpl  = loadTmpl("directory")
-	fileTmpl = loadTmpl("file")
-	errTmpl  = loadTmpl("error")
-
 	contentTypes = map[string][]string{
 		"image": {".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif"},
 		"video": {".mp4", ".mov", ".avi", ".wmf"},
@@ -25,10 +21,10 @@ var (
 
 type (
 	BaseData struct {
-		Host   string
-		Addr   string
-		Path   string
-		Split  []string
+		Host  string
+		Addr  string
+		Path  string
+		Split []string
 
 		Join func(...string) string
 		Size func(int64) string
@@ -50,8 +46,8 @@ type (
 	}
 
 	ErrorData struct {
-		Base BaseData
-		Err  error
+		Base  BaseData
+		Error error
 	}
 )
 
@@ -60,11 +56,11 @@ func browse(w http.ResponseWriter, r *http.Request) {
 	target, err := os.Stat(targetPath)
 	pageData := loadBaseData(r.URL.Path)
 
-	record("GET", path.Clean(r.URL.Path))
+	throw(Get, path.Clean(r.URL.Path))
 
 	if err != nil {
-		record("ERROR", err.Error())
-		errTmpl.ExecuteTemplate(w, "error.html", ErrorData{pageData, err})
+		throw(Error, err.Error())
+		render(w, Error, ErrorData{pageData, err})
 		return
 	}
 
@@ -72,21 +68,21 @@ func browse(w http.ResponseWriter, r *http.Request) {
 		dir, err := os.ReadDir(targetPath)
 
 		if err != nil {
-			record("ERROR", err.Error())
-			errTmpl.ExecuteTemplate(w, "error.html", ErrorData{pageData, err})
+			throw(Error, err.Error())
+			render(w, Error, ErrorData{pageData, err})
 			return
 		}
-		
+
 		isRoot := targetPath == source
 		dirName := path.Base(targetPath)
 
-		dirTmpl.ExecuteTemplate(w, "directory.html", DirData{pageData, dir, isRoot, dirName})
+		render(w, Directory, DirData{pageData, dir, isRoot, dirName})
 	} else {
 		file, err := os.ReadFile(targetPath)
 
 		if err != nil {
-			record("ERROR", err.Error())
-			errTmpl.ExecuteTemplate(w, "error.html", ErrorData{pageData, err})
+			throw(Error, err.Error())
+			render(w, Error, ErrorData{pageData, err})
 			return
 		}
 
@@ -102,7 +98,7 @@ func browse(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		fileTmpl.ExecuteTemplate(w, "file.html", FileData{pageData, string(file), name, fileType, size})
+		render(w, File, FileData{pageData, string(file), name, fileType, size})
 	}
 }
 
@@ -110,7 +106,7 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 	target := strings.TrimPrefix(r.URL.Path, "/zip/")
 	targetPath := path.Join(source, target)
 
-	record("ZIP", path.Clean(r.URL.Path))
+	throw(Zip, path.Clean(r.URL.Path))
 
 	w.Header().Set("Content-Type", "application/zip")
 
@@ -118,7 +114,7 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 	defer zw.Close()
 
 	if err := copyToZip(zw, targetPath, path.Base(targetPath)); err != nil {
-		record("ERROR", err.Error())
-		errTmpl.ExecuteTemplate(w, "error.html", ErrorData{loadBaseData(""), err})
+		throw(Error, err.Error())
+		render(w, Error, ErrorData{loadBaseData(""), err})
 	}
 }

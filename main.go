@@ -1,12 +1,24 @@
 package main
 
 import (
+
 	"embed"
 	"fmt"
 	"net/http"
 	"os"
 
 	qr "github.com/mdp/qrterminal/v3"
+)
+
+type Msg = uint8
+
+const (
+	Directory Msg = iota
+	File
+	Error
+	Warn
+	Get
+	Zip
 )
 
 const PORT int32 = 8080
@@ -22,7 +34,10 @@ var (
 TODO:
 - Support for audio, pdf and binaries
 - Use random string for URIs to avoid conflicts
+- Simplify loading templates
+- Add a way to share a single file
 */
+
 func main() {
 	http.HandleFunc("/", browse)
 
@@ -43,5 +58,5 @@ func main() {
 	
 	go http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
 
-	fmt.Scan()
+	fmt.Scanln()
 }

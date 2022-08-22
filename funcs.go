@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"html/template"
 	"log"
 	"math"
 	"net"
@@ -60,15 +59,6 @@ func loadEnv() (pwd string, host string, addr string) {
 	return
 }
 
-func loadTmpl(tmplName string) *template.Template {
-	tmpl, err := template.ParseFS(assets, "web/base.html", fmt.Sprintf("web/%s.html", tmplName))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return tmpl
-}
-
 func loadBaseData(url string) BaseData {
 	return BaseData{
 		Host:  host,
@@ -104,17 +94,4 @@ func fileSize(n int64) string {
 	exp := math.Floor(math.Log(float64(n)) / math.Log(1000))
 
 	return fmt.Sprintf("%.1f%s", float64(n)/math.Pow(1000, exp), units[int(exp)])
-}
-
-func record(level, msg string) {
-	switch strings.ToUpper(level) {
-	case "GET":
-		log.Printf("\033[32mGET:\033[0m %s", msg)
-	case "ERROR":
-		log.Printf("\033[31mERROR:\033[0m %s", msg)
-	case "WARN":
-		log.Printf("\033[33mWARNING:\033[0m %s", msg)
-	case "ZIP":
-		log.Printf("\033[33mZIP:\033[0m %s", msg)
-	}
 }
