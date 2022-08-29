@@ -1,7 +1,6 @@
 package main
 
 import (
-
 	"embed"
 	"fmt"
 	"net/http"
@@ -28,18 +27,23 @@ var (
 	assets          embed.FS
 	pwd, host, addr = loadEnv()
 	source          = resolveBase()
+
+	urls = map[string]string{
+		"static":   randUrl(1),
+		"download": randUrl(2),
+		"zip":      randUrl(3),
+	}
 )
 
 func main() {
-	http.HandleFunc("/", browse)
-
 	programFiles := http.FileServer(http.FS(assets))
-	http.Handle("/static/", http.StripPrefix("/static/", programFiles))
+	http.Handle(urls["static"], http.StripPrefix(urls["static"], programFiles))
 
 	downloadFiles := http.FileServer(http.Dir(source))
-	http.Handle("/download/", http.StripPrefix("/download/", downloadFiles))
+	http.Handle(urls["download"], http.StripPrefix(urls["download"], downloadFiles))
 
-	http.HandleFunc("/zip/", downloadZip)
+	http.HandleFunc(urls["zip"], downloadZip)
+	http.HandleFunc("/", browse)
 
 	url := fmt.Sprintf("http://%s:%d", addr, PORT)
 
@@ -47,7 +51,7 @@ func main() {
 	fmt.Printf("Base directory: %s\n\n", source)
 
 	qr.GenerateHalfBlock(url, qr.L, os.Stdout)
-	
+
 	go http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
 
 	fmt.Scanln()

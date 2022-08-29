@@ -25,7 +25,7 @@ type (
 		Addr  string
 		Path  string
 		Split []string
-
+		Urls map[string]string
 		Join func(...string) string
 		Size func(int64) string
 	}
@@ -103,7 +103,7 @@ func browse(w http.ResponseWriter, r *http.Request) {
 }
 
 func downloadZip(w http.ResponseWriter, r *http.Request) {
-	target := strings.TrimPrefix(r.URL.Path, "/zip/")
+	target := strings.TrimPrefix(r.URL.Path, urls["zip"])
 	targetPath := path.Join(source, target)
 
 	throw(Zip, path.Clean(r.URL.Path))

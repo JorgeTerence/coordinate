@@ -4,13 +4,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="/static/web/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/static/web/style.css" />
+    <link rel="shortcut icon" href="{{ index .Base.Urls "static" }}web/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ index .Base.Urls "static" }}web/style.css" />
     <title>Coordinate</title>
   </head>
   <body>
     <h1>
-      Coordinate on <a title="{{ .Base.Addr }}" href="/">{{ .Base.Host }}</a>
+      Coordinate on <a title="http://{{ .Base.Addr }}" href="/">{{ .Base.Host }}</a>
     </h1>
     {{ template "content" . }}
   </body>

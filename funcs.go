@@ -3,12 +3,16 @@ package main
 import (
 	"errors"
 	"fmt"
+	"html/template"
+	"io"
 	"log"
 	"math"
+	"math/rand"
 	"net"
 	"os"
 	"path"
 	"strings"
+	"time"
 )
 
 func getIPAddr() (string, error) {
@@ -65,9 +69,9 @@ func loadBaseData(url string) BaseData {
 		Addr:  addr,
 		Path:  url,
 		Split: strings.Split(url, "/")[1:],
-
-		Join: path.Join,
-		Size: fileSize,
+		Urls:  urls,
+		Join:  path.Join,
+		Size:  fileSize,
 	}
 }
 
@@ -94,4 +98,42 @@ func fileSize(n int64) string {
 	exp := math.Floor(math.Log(float64(n)) / math.Log(1000))
 
 	return fmt.Sprintf("%.1f%s", float64(n)/math.Pow(1000, exp), units[int(exp)])
+}
+
+func randUrl(seed int64) string {
+	charset := "abcdefghijklmnopqrstuvwxyz0123456789"
+
+	str := ""
+
+	for i := int64(1); i <= 10; i++ {
+		str += string(charset[rand.Intn(36)])
+		rand.Seed(time.Now().Unix()%seed + i*3)
+	}
+
+	return fmt.Sprintf("/%s/", str)
+}
+
+func render(w io.Writer, t Msg, data interface{}) {
+	f := []string{"directory.html", "file.html", "error.html"}[t]
+
+	tmpl, err := template.ParseFS(assets, "web/base.html", "web/"+f)
+	if err != nil {
+		throw(Error, err.Error())
+		return
+	}
+
+	tmpl.ExecuteTemplate(w, f, data)
+}
+
+func throw(level Msg, msg interface{}) {
+	switch level {
+	case Get:
+		log.Printf("\033[32mGET:\033[0m %s", msg)
+	case Error:
+		log.Printf("\033[31mERROR:\033[0m %s", msg)
+	case Warn:
+		log.Printf("\033[33mWARNING:\033[0m %s", msg)
+	case Zip:
+		log.Printf("\033[33mZIP:\033[0m %s", msg)
+	}
 }

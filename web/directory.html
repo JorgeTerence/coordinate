@@ -11,10 +11,10 @@
   </ul>
   <a
     {{ if .IsRoot }}
-      class="download" href="/zip/." download="coordinate.zip"
+      class="download" href="{{ index .Base.Urls "zip" }}." download="coordinate.zip"
     {{ else }}
       class="download"
-      href="/{{ call .Base.Join "zip" .Base.Path }}"
+      href="{{ call .Base.Join (index .Base.Urls "zip") .Base.Path }}"
       download="{{ print .DirName ".zip" }}"
     {{ end }}
   >

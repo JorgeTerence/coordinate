@@ -7,18 +7,17 @@
   </ul>
 
   <a
-    href="{{ call .Base.Join ("/download/") (.Base.Path) }}"
+    href="{{ call .Base.Join (index .Base.Urls "download") (.Base.Path) }}"
     download="{{ .Name }}"
   >
     <span class="material-symbols-outlined">file_download</span>
     <span>Download [{{ .Size }}]</span>
   </a>
   
-  {{/* Recognize file extension  */}}
   {{ if eq .Type "image" }}
-    <img src="/download/{{ .Base.Path }}" alt="{{ .Name }}">
+    <img src="{{ index .Base.Urls "download" }}{{ .Base.Path }}" alt="{{ .Name }}">
   {{ else if eq .Type "video" }}
-    <video controls src="/download/{{ .Base.Path }}"></video>
+    <video controls src="{{ index .Base.Urls "download" }}{{ .Base.Path }}"></video>
   {{ else }}
     <pre><code>{{ .Content }}</code></pre>
   {{ end }}
