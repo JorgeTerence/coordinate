@@ -1,10 +1,12 @@
 {{ template "base" . }}
 {{ define "content" }}
-  <ul class="path">
-    {{ range .Base.Split }}
-      <li>{{ . }}</li>
-    {{ end }}
-  </ul>
+  {{ if gt (len .Base.Split) 1 }}
+    <ul class="path">
+      {{ range .Base.Split }}
+        <li>{{ . }}</li>
+      {{ end }}
+    </ul>
+  {{ end }}
 
   <a
     href="{{ call .Base.Join (index .Base.Urls "download") (.Base.Path) }}"
@@ -13,6 +15,10 @@
     <span class="material-symbols-outlined">file_download</span>
     <span>Download [{{ .Size }}]</span>
   </a>
+
+  {{ if .Executable }}
+    <pre class="notice"><code>This is an executable.</code></pre>
+  {{ end }}
   
   {{ if eq .Type "image" }}
     <img src="{{ index .Base.Urls "download" }}{{ .Base.Path }}" alt="{{ .Name }}">

@@ -32,11 +32,10 @@ See more at [SAMPLES.md](assets/SAMPLES.md)
 
 ## TODO
 
-- [ ] Support for PDFs, audio, binaries and Office files - odt, xls, docx etc
-- [ ] Handle executable encoded or protected files
+- [X] Handle executable encoded or protected files
 - [ ] Packaging for various platforms
-- [ ] Single file sharing
-- [ ] Use random strings for internal URIs
-- [ ] Context menu action for Windows' File Explorer
+- [X] Single file sharing
+- [X] Use random strings for internal URIs
+- [ ] Context menu action for File Explorer, Dolphin, Nautilus etc.
 
 I swear I'll rewrite all this in Rust one day...

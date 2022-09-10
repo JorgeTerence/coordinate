@@ -25,9 +25,9 @@ type (
 		Addr  string
 		Path  string
 		Split []string
-		Urls map[string]string
-		Join func(...string) string
-		Size func(int64) string
+		Urls  map[string]string
+		Join  func(...string) string
+		Size  func(int64) string
 	}
 
 	DirData struct {
@@ -38,11 +38,12 @@ type (
 	}
 
 	FileData struct {
-		Base    BaseData
-		Content string
-		Name    string
-		Type    string
-		Size    string
+		Base       BaseData
+		Content    string
+		Name       string
+		Type       string
+		Size       string
+		Executable bool
 	}
 
 	ErrorData struct {
@@ -52,54 +53,72 @@ type (
 )
 
 func browse(w http.ResponseWriter, r *http.Request) {
-	targetPath := path.Join(source, r.URL.Path)
-	target, err := os.Stat(targetPath)
-	pageData := loadBaseData(r.URL.Path)
+	target, err := os.Stat(path.Join(source, r.URL.Path))
 
 	throw(Get, path.Clean(r.URL.Path))
 
 	if err != nil {
-		throw(Error, err.Error())
-		render(w, Error, ErrorData{pageData, err})
+		throw(Error, err)
+		render(w, Error, ErrorData{loadBaseData(""), err})
 		return
 	}
 
 	if target.IsDir() {
-		dir, err := os.ReadDir(targetPath)
-
-		if err != nil {
-			throw(Error, err.Error())
-			render(w, Error, ErrorData{pageData, err})
-			return
-		}
-
-		isRoot := targetPath == source
-		dirName := path.Base(targetPath)
-
-		render(w, Directory, DirData{pageData, dir, isRoot, dirName})
+		dirView(w, r)
 	} else {
-		file, err := os.ReadFile(targetPath)
-
-		if err != nil {
-			throw(Error, err.Error())
-			render(w, Error, ErrorData{pageData, err})
-			return
-		}
-
-		name := path.Base(targetPath)
-		size := fileSize(target.Size())
-
-		var fileType string
-
-		for contentType, ext := range contentTypes {
-			if lo.Contains(ext, path.Ext(targetPath)) {
-				fileType = contentType
-				break
-			}
-		}
-
-		render(w, File, FileData{pageData, string(file), name, fileType, size})
+		fileView(w, r)
 	}
+}
+
+func fileView(w http.ResponseWriter, r *http.Request) {
+	targetPath := path.Join(source, r.URL.Path)
+	target, err := os.Stat(targetPath)
+	pageData := loadBaseData(r.URL.Path)
+
+	if err != nil {
+		throw(Error, err)
+		render(w, Error, ErrorData{pageData, err})
+		return
+	}
+
+	file, err := os.ReadFile(targetPath)
+
+	if err != nil {
+		throw(Error, err)
+		render(w, Error, ErrorData{pageData, err})
+		return
+	}
+
+	name := path.Base(targetPath)
+	size := fileSize(target.Size())
+
+	var fileType string
+
+	for contentType, ext := range contentTypes {
+		if lo.Contains(ext, path.Ext(targetPath)) {
+			fileType = contentType
+			break
+		}
+	}
+
+	render(w, File, FileData{pageData, string(file), name, fileType, size, target.Mode().Perm()&0111 != 0})
+}
+
+func dirView(w http.ResponseWriter, r *http.Request) {
+	targetPath := path.Join(source, r.URL.Path)
+	pageData := loadBaseData(r.URL.Path)
+	dir, err := os.ReadDir(targetPath)
+
+	if err != nil {
+		throw(Error, err)
+		render(w, Error, ErrorData{pageData, err})
+		return
+	}
+
+	isRoot := targetPath == source
+	dirName := path.Base(targetPath)
+
+	render(w, Directory, DirData{pageData, dir, isRoot, dirName})
 }
 
 func downloadZip(w http.ResponseWriter, r *http.Request) {
@@ -114,7 +133,7 @@ func downloadZip(w http.ResponseWriter, r *http.Request) {
 	defer zw.Close()
 
 	if err := copyToZip(zw, targetPath, path.Base(targetPath)); err != nil {
-		throw(Error, err.Error())
+		throw(Error, err)
 		render(w, Error, ErrorData{loadBaseData(""), err})
 	}
 }
